@@ -1,0 +1,2123 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#1A1A2E">
+<meta name="color-scheme" content="dark">
+<title>MILAVY – CEO Dashboard</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --p:#C8385A;--ps:#F5A7B8;--dark:#1A1A2E;--acc:#2C3E50;
+  --gr:#1A6632;--lgr:#D5F5E3;--rd:#922B21;--lrd:#FADBD8;
+  --or:#BA4A00;--lor:#FDEBD0;--bl:#1A5276;--lbl:#D6EAF8;
+  --pu:#6C3483;--lpu:#F5EEF8;--gy:#F2F3F4;--dgy:#616A6B;
+  --wh:#FFFFFF;--yl:#FEF9E7;--teal:#0E6655;--lteal:#E8F8F5;
+}
+html{background:#0f0f1a!important;min-height:100%;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0f0f1a!important;min-height:100vh;color:#fff!important}
+/* LOGIN */
+#login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:30px 20px;background:linear-gradient(135deg,#1A1A2E 0%,#16213e 50%,#0f3460 100%)}
+.login-card{background:rgba(255,255,255,.05);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:28px 24px;width:100%;max-width:400px}
+.f-in{width:100%;padding:13px 16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:12px;color:#fff;font-size:15px;outline:none;font-family:inherit;transition:border-color .2s;margin-bottom:14px}
+.f-in:focus{border-color:var(--p)}
+.f-in::placeholder{color:rgba(255,255,255,.3)}
+.f-sel{width:100%;padding:11px 14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;font-size:14px;outline:none;font-family:inherit;appearance:none}
+.f-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.btn-login{width:100%;padding:15px;background:linear-gradient(135deg,var(--p),#a01d3f);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit}
+/* LAYOUT */
+#main-app{display:none}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:230px;background:#111827;border-right:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;z-index:100;transition:transform .3s}
+#main-app[style*="none"] .sidebar,body:not(.app-ready) .sidebar{display:none!important}
+.nav-item{display:flex;align-items:center;gap:10px;padding:11px 18px;color:rgba(255,255,255,.5);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{color:#fff;background:rgba(255,255,255,.06)}
+.nav-item.active{color:#fff;background:#3d1a24;border-right:3px solid var(--p)}
+.nav-item .ni{font-size:18px;width:22px;text-align:center}
+.content{margin-left:230px;min-height:100vh;padding-bottom:40px;background:#0f0f1a}
+.page-hdr{padding:18px 24px 14px;border-bottom:1px solid rgba(255,255,255,.1);background:#141824;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.page-title{font-size:17px;font-weight:800;color:#fff}
+.page-sub{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px}
+.page-body{padding:20px 24px}
+.screen{display:none}.screen.active{display:block}
+/* CARDS */
+.glass{background:#1e2535;border:1px solid rgba(255,255,255,.12);border-radius:14px}
+.kcard{background:#1e2535;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:16px}
+.knum{font-size:26px;font-weight:900;color:#fff;margin:8px 0 4px}
+.klbl{font-size:11px;color:rgba(255,255,255,.5);font-weight:600}
+.ktrend{font-size:11px;margin-top:5px;font-weight:700}
+.ktrend.up{color:#4ade80}.ktrend.dn{color:#f87171}
+/* TABLES */
+.dtbl{width:100%;border-collapse:collapse;font-size:13px}
+.dtbl th{padding:10px 12px;background:#252f45;color:rgba(255,255,255,.5);font-size:11px;text-transform:uppercase;letter-spacing:.5px;text-align:left;font-weight:700}
+.dtbl td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.05);color:rgba(255,255,255,.85);vertical-align:middle}
+.dtbl tr:hover td{background:rgba(255,255,255,.03)}
+.dtbl tr:last-child td{border-bottom:none}
+/* BADGES */
+.bd{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.b-ok{background:rgba(26,102,50,.3);color:#4ade80;border:1px solid rgba(74,222,128,.2)}
+.b-x{background:rgba(146,43,33,.3);color:#f87171;border:1px solid rgba(248,113,113,.2)}
+.b-warn{background:rgba(186,74,0,.3);color:#fb923c;border:1px solid rgba(251,146,60,.2)}
+.b-fraud{background:rgba(200,56,90,.4);color:#fca5a5;border:1px solid rgba(200,56,90,.4)}
+.b-info{background:rgba(26,82,118,.3);color:#60a5fa;border:1px solid rgba(96,165,250,.2)}
+.b-pend{background:rgba(108,52,131,.3);color:#c084fc;border:1px solid rgba(192,132,252,.2)}
+.b-done{background:rgba(14,102,85,.3);color:#34d399;border:1px solid rgba(52,211,153,.2)}
+/* PIPELINE VISUAL */
+.pipe-row{display:flex;align-items:center;gap:0;border-radius:10px;overflow:hidden;margin-bottom:8px}
+.pipe-seg{flex:1;padding:8px 6px;text-align:center;font-size:11px;font-weight:700;transition:all .2s}
+.ps-done{background:rgba(26,102,50,.3);color:#4ade80}
+.ps-active{background:rgba(26,82,118,.3);color:#60a5fa}
+.ps-pend{background:rgba(255,255,255,.06);color:rgba(255,255,255,.3)}
+/* CALENDAR */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-head{text-align:center;font-size:10px;font-weight:700;color:rgba(255,255,255,.4);padding:4px 0}
+.cal-day{text-align:center;padding:6px 3px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .15s;color:rgba(255,255,255,.6);position:relative}
+.cal-day:hover{background:rgba(255,255,255,.1)}
+.cd-today{background:var(--p)!important;color:#fff!important;font-weight:700}
+.cd-work{background:rgba(26,102,50,.3);color:#4ade80;font-weight:600}
+.cd-ot{background:rgba(186,74,0,.3);color:#fb923c;font-weight:600}
+.cd-off{background:rgba(146,43,33,.2);color:#f87171}
+.cd-hol{background:rgba(200,56,90,.2);color:#fca5a5}
+.cd-empty{opacity:0;pointer-events:none}
+/* SHIFT EDITOR */
+.shift-cell{padding:6px;border-radius:8px;cursor:pointer;text-align:center;font-size:11px;font-weight:600;border:1px solid transparent;transition:all .15s;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.sc-none{background:rgba(255,255,255,.04);color:rgba(255,255,255,.2);border-color:rgba(255,255,255,.06)}
+.sc-sang{background:rgba(26,82,118,.25);color:#60a5fa;border-color:rgba(96,165,250,.2)}
+.sc-chieu{background:rgba(108,52,131,.25);color:#c084fc;border-color:rgba(192,132,252,.2)}
+.sc-pt{background:rgba(186,74,0,.25);color:#fb923c;border-color:rgba(251,146,60,.2)}
+.sc-ot{background:rgba(14,102,85,.25);color:#34d399;border-color:rgba(52,211,153,.2)}
+.sc-off{background:rgba(146,43,33,.2);color:#f87171;border-color:rgba(248,113,113,.15)}
+/* SALARY */
+.sal-section{margin-bottom:16px}
+.sal-sec-title{font-size:11px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:8px}
+.sal-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.sal-row:last-child{border-bottom:none}
+.sal-lbl{font-size:13px;color:rgba(255,255,255,.7)}
+.sal-val{font-size:13px;font-weight:700;color:#fff}
+.sal-val.green{color:#4ade80}.sal-val.red{color:#f87171}.sal-val.big{font-size:17px;color:var(--ps)}
+/* LEAVE APPROVAL */
+.leave-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;margin-bottom:10px}
+/* ALERTS */
+.alert{border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:flex-start;gap:10px}
+.al-red{background:rgba(146,43,33,.2);border:1px solid rgba(200,56,90,.3)}
+.al-or{background:rgba(186,74,0,.15);border:1px solid rgba(186,74,0,.3)}
+.al-gr{background:rgba(26,102,50,.15);border:1px solid rgba(26,102,50,.3)}
+/* BUTTONS */
+.btn{padding:10px 16px;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-p{background:rgba(200,56,90,.3);border:1px solid rgba(200,56,90,.4);color:var(--ps)}
+.btn-g{background:rgba(26,102,50,.3);border:1px solid rgba(26,102,50,.4);color:#4ade80}
+.btn-r{background:rgba(146,43,33,.3);border:1px solid rgba(146,43,33,.4);color:#f87171}
+.btn-b{background:rgba(26,82,118,.3);border:1px solid rgba(26,82,118,.4);color:#60a5fa}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:7px}
+/* NV CARDS */
+.nv-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;cursor:pointer;transition:all .2s}
+.nv-card:hover{border-color:rgba(200,56,90,.4);background:rgba(200,56,90,.05)}
+.nv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.kpi-mini{height:5px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden;margin-top:8px}
+.kpi-fill{height:100%;border-radius:99px;transition:width .5s}
+/* CHART */
+.chart-wrap{display:flex;align-items:flex-end;gap:6px;height:100px;margin-top:10px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bar{width:100%;border-radius:4px 4px 0 0;min-height:4px}
+.bar-lbl{font-size:9px;color:rgba(255,255,255,.4);font-weight:600}
+.bar-val{font-size:10px;color:rgba(255,255,255,.7);font-weight:700}
+/* MOBILE */
+.mob-hdr{display:none;padding:12px 16px;background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.08);align-items:center;gap:10px;position:sticky;top:0;z-index:200}
+@media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.content{margin-left:0}.mob-hdr{display:flex}.kgrid{grid-template-columns:repeat(2,1fr)!important}}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99}
+.overlay.show{display:block}
+.section{background:#1a2030;border:1px solid rgba(255,255,255,.12);border-radius:14px;margin-bottom:16px;overflow:hidden}
+.sec-hdr{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between}
+.sec-title{font-size:14px;font-weight:700;color:#fff}
+.sec-body{padding:14px 18px}
+.period-btn{padding:5px 11px;background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:6px;color:rgba(255,255,255,.5);font-size:11px;cursor:pointer;font-family:inherit;transition:all .15s;margin-left:5px}
+.period-btn.active{background:rgba(200,56,90,.2);border-color:var(--p);color:var(--ps)}
+.scroll-x{overflow-x:auto}
+
+/* Hide fixed elements when app not yet shown */
+.app-hidden .sidebar,
+.app-hidden .mob-hdr,
+.app-hidden .overlay { display:none !important; }
+/* Modal backdrop fix - use original CSS */
+
+.bot-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#111827;border-top:1px solid rgba(255,255,255,.1);z-index:300;padding:4px 0 env(safe-area-inset-bottom);box-shadow:0 -4px 20px rgba(0,0,0,.4)}
+.bot-nav-inner{display:flex;overflow-x:auto;scrollbar-width:none}
+.bot-nav-inner::-webkit-scrollbar{display:none}
+.bnb{display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 9px;border:none;background:none;cursor:pointer;color:rgba(255,255,255,.4);font-size:9px;font-weight:600;white-space:nowrap;flex-shrink:0;min-width:52px;font-family:inherit;transition:color .15s}
+.bnb .bico{font-size:18px}
+.bnb.active{color:var(--p)}
+@media(max-width:768px){.bot-nav{display:block}.content{padding-bottom:70px}}
+
+</style>
+</head>
+<body class="app-hidden">
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div style="font-size:52px;margin-bottom:8px">🏪</div>
+  <div style="font-size:28px;font-weight:900;background:linear-gradient(90deg,#C8385A,#F5A7B8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:3px;margin-bottom:4px">MILAVY</div>
+  <div style="color:rgba(255,255,255,.4);font-size:12px;margin-bottom:32px;letter-spacing:1px">CEO & MANAGER DASHBOARD v2.0</div>
+  <div class="login-card">
+    <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:18px">🔐 Đăng nhập quản lý</div>
+    <label class="f-lbl">Tài khoản</label>
+    <input type="text" class="f-in" id="l-user" placeholder="Username...">
+    <label class="f-lbl">Mật khẩu</label>
+    <input type="password" class="f-in" id="l-pass" placeholder="••••••••">
+    <button class="btn-login" onclick="doLogin()">🚀 Đăng nhập</button>
+    <div id="l-err" style="background:rgba(146,43,33,.3);border:1px solid var(--rd);border-radius:8px;padding:10px;font-size:13px;color:#ffaaaa;margin-top:12px;display:none">❌ Sai tài khoản hoặc mật khẩu</div>
+    <div style="color:rgba(255,255,255,.3);font-size:11px;text-align:center;margin-top:14px">Chỉ dành cho CEO & Quản lý MILAVY</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main-app">
+<div class="mob-hdr">
+  <button onclick="toggleSB()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer">☰</button>
+  <div style="font-size:15px;font-weight:800;background:linear-gradient(90deg,#C8385A,#F5A7B8);-webkit-background-clip:text;-webkit-text-fill-color:transparent">MILAVY CEO
+  <div id="sync-status" style="display:none;padding:3px 16px;font-size:11px;font-weight:700;text-align:center;transition:all .3s"></div>
+</div>
+  <div style="margin-left:auto;font-size:12px;color:rgba(255,255,255,.5)" id="m-clk">--:--</div>
+</div>
+<div class="overlay" id="overlay" onclick="toggleSB()"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div style="padding:18px;border-bottom:1px solid rgba(255,255,255,.08)">
+    <div style="font-size:17px;font-weight:900;background:linear-gradient(90deg,#C8385A,#F5A7B8);-webkit-background-clip:text;-webkit-text-fill-color:transparent">MILAVY</div>
+    <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:2px">CEO DASHBOARD v2.0</div>
+  </div>
+  <div style="padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px">
+    <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--p),#a01d3f);display:flex;align-items:center;justify-content:center;font-size:16px" id="s-ava">👑</div>
+    <div><div style="font-size:13px;font-weight:700;color:#fff" id="s-uname">--</div><div style="font-size:10px;color:var(--ps)" id="s-urole">--</div></div>
+  </div>
+  <div style="flex:1;padding:10px 0;overflow-y:auto">
+    <div class="nav-item active" id="ni-overview" onclick="goPage('overview')"><span class="ni">📊</span>Tổng quan</div>
+    <div class="nav-item" id="ni-pipeline" onclick="goPage('pipeline')"><span class="ni">🔄</span>Pipeline đơn hàng</div>
+    <div class="nav-item" id="ni-schedule" onclick="goPage('schedule')"><span class="ni">📅</span>Xếp ca & Lịch làm</div>
+    <div class="nav-item" id="ni-leaves" onclick="goPage('leaves')"><span class="ni">🏖️</span>Duyệt nghỉ phép</div>
+    <div class="nav-item" id="ni-salary" onclick="goPage('salary')"><span class="ni">💰</span>Bảng lương đầy đủ</div>
+    <div class="nav-item" id="ni-kpi" onclick="goPage('kpi')"><span class="ni">🎯</span>KPI nhân viên</div>
+    <div class="nav-item" id="ni-hoan" onclick="goPage('hoan')"><span class="ni">↩️</span>Hàng hoàn & Lỗi</div>
+    <div class="nav-item" id="ni-nhanvien" onclick="goPage('nhanvien')"><span class="ni">👥</span>Nhân viên</div>
+    <div class="nav-item" id="ni-products"  onclick="goPage('products')" ><span class="ni">🏷️</span>Sản phẩm</div>
+    <div class="nav-item" id="ni-s5"       onclick="goPage('s5')"       ><span class="ni">🌟</span>Chấm 5S</div>
+    <div class="nav-item" id="ni-bieumau"  onclick="goPage('bieumau')"  ><span class="ni">📋</span>Biểu mẫu</div>
+    <div class="nav-item" id="ni-baocao"   onclick="goPage('baocao')"   ><span class="ni">📈</span>Báo cáo</div>
+    <div class="nav-item" id="ni-settings" onclick="goPage('settings')"><span class="ni">⚙️</span>Cài đặt & API</div>
+  </div>
+  <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,.08)">
+    <div style="font-size:10px;color:rgba(255,255,255,.3);margin-bottom:7px" id="s-upd">--</div>
+    <button onclick="doLogout()" style="width:100%;padding:9px;background:rgba(146,43,33,.2);border:1px solid rgba(146,43,33,.3);border-radius:8px;color:var(--ps);font-size:13px;cursor:pointer;font-family:inherit">🚪 Đăng xuất</button>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ── TỔNG QUAN ── -->
+<div id="pg-overview" class="screen active">
+  <div class="page-hdr">
+    <div><div class="page-title">📊 Tổng quan hôm nay</div><div class="page-sub" id="ov-date">--</div></div>
+    <div>
+      <button class="period-btn active" onclick="setPeriod('day',this)">Hôm nay</button>
+      <button class="period-btn" onclick="setPeriod('week',this)">Tuần</button>
+      <button class="period-btn" onclick="setPeriod('month',this)">Tháng</button>
+      <button class="btn btn-p btn-sm" onclick="refreshAll()" style="margin-left:8px">🔄 Làm mới</button>
+    </div>
+  </div>
+  <div class="page-body">
+    <div id="ov-alerts"></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px" class="kgrid">
+      <div class="kcard"><div style="font-size:22px">📦</div><div class="knum" id="ov-ok">0</div><div class="klbl">Đơn OK</div><div class="ktrend up" id="ov-ok-t">--</div></div>
+      <div class="kcard"><div style="font-size:22px">❌</div><div class="knum" id="ov-x">0</div><div class="klbl">Đơn X</div><div class="ktrend dn" id="ov-x-t">--</div></div>
+      <div class="kcard"><div style="font-size:22px">📅</div><div class="knum" id="ov-att">0</div><div class="klbl">NV check-in</div><div class="ktrend" id="ov-att-t">/ 5 NV</div></div>
+      <div class="kcard"><div style="font-size:22px">🔄</div><div class="knum" id="ov-pipe">0</div><div class="klbl">Đơn đang xử lý</div><div class="ktrend" id="ov-pipe-t">trong pipeline</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="section">
+        <div class="sec-hdr"><div class="sec-title">👥 Hiệu suất từng NV</div></div>
+        <div class="sec-body" id="ov-nv"></div>
+      </div>
+      <div class="section">
+        <div class="sec-hdr"><div class="sec-title">📈 Đơn OK – 7 ngày</div></div>
+        <div class="sec-body"><div class="chart-wrap" id="ov-chart"></div></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="sec-hdr"><div class="sec-title">🔄 Pipeline đơn hàng – trạng thái ngay bây giờ</div></div>
+      <div class="sec-body" id="ov-pipeline"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── PIPELINE ── -->
+<div id="pg-pipeline" class="screen">
+  <div class="page-hdr">
+    <div><div class="page-title">🔄 Pipeline Đơn Hàng – 4 Bước</div><div class="page-sub">Theo dõi từng đơn ai làm bước nào</div></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="date" id="pip-date" style="padding:7px 10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-size:12px;font-family:inherit">
+      <select id="pip-nv" class="f-sel" style="width:120px">
+        <option value="">Tất cả NV</option>
+        <option>Lan</option><option>Hoa</option><option>Mai</option><option>Thu</option><option>Trang</option>
+      </select>
+      <button class="btn btn-p btn-sm" onclick="renderPipeline()">Lọc</button>
+    </div>
+  </div>
+  <div class="page-body">
+    <!-- Kanban view -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px" id="kanban-cols"></div>
+    <!-- Detail table -->
+    <div class="section">
+      <div class="sec-hdr"><div class="sec-title">📋 Chi tiết từng đơn</div></div>
+      <div class="scroll-x">
+        <table class="dtbl">
+          <thead><tr>
+            <th>Mã đơn</th><th>NV</th><th>Ca</th><th>Giờ quét</th>
+            <th>Nhận đơn</th><th>Lấy hàng</th><th>Đóng gói</th><th>Bàn giao</th>
+            <th>Trạng thái</th>
+          </tr></thead>
+          <tbody id="pip-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── XẾP CA ── -->
+<div id="pg-schedule" class="screen">
+  <div class="page-hdr">
+    <div><div class="page-title">📅 Xếp Ca & Lịch Làm Việc</div><div class="page-sub">Kéo thả để xếp ca – tự động lưu</div></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button onclick="prevWeek()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;padding:7px 12px;cursor:pointer;font-family:inherit">← Tuần trước</button>
+      <div id="week-lbl" style="font-size:13px;font-weight:700;color:#fff;min-width:140px;text-align:center">--</div>
+      <button onclick="nextWeek()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;padding:7px 12px;cursor:pointer;font-family:inherit">Tuần sau →</button>
+    </div>
+  </div>
+  <div class="page-body">
+    <!-- Legend -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;font-size:11px">
+      <span style="background:rgba(26,82,118,.25);color:#60a5fa;padding:3px 10px;border-radius:20px;font-weight:700">☀️ Ca Sáng</span>
+      <span style="background:rgba(108,52,131,.25);color:#c084fc;padding:3px 10px;border-radius:20px;font-weight:700">🌆 Ca Chiều</span>
+      <span style="background:rgba(186,74,0,.25);color:#fb923c;padding:3px 10px;border-radius:20px;font-weight:700">⏱️ Part-time</span>
+      <span style="background:rgba(14,102,85,.25);color:#34d399;padding:3px 10px;border-radius:20px;font-weight:700">🌙 OT Tăng ca</span>
+      <span style="background:rgba(146,43,33,.2);color:#f87171;padding:3px 10px;border-radius:20px;font-weight:700">🏖️ Nghỉ phép</span>
+      <span style="background:rgba(255,255,255,.06);color:rgba(255,255,255,.3);padding:3px 10px;border-radius:20px;font-weight:700">○ Chưa xếp</span>
+    </div>
+    <!-- Schedule grid -->
+    <div class="section">
+      <div class="scroll-x">
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr>
+            <th style="padding:10px 12px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);font-size:11px;text-align:left;font-weight:700;min-width:110px">Nhân viên</th>
+            <th id="sh-d0" style="padding:10px 8px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);font-size:11px;text-align:center;font-weight:700;min-width:80px">--</th>
+            <th id="sh-d1" style="padding:10px 8px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);font-size:11px;text-align:center;font-weight:700;min-width:80px">--</th>
+            <th id="sh-d2" style="padding:10px 8px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);font-size:11px;text-align:center;font-weight:700;min-width:80px">--</th>
+            <th id="sh-d3" style="padding:10px 8px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);font-size:11px;text-align:center;font-weight:700;min-width:80px">--</th>
+            <th id="sh-d4" style="padding:10px 8px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);font-size:11px;text-align:center;font-weight:700;min-width:80px">--</th>
+            <th id="sh-d5" style="padding:10px 8px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);font-size:11px;text-align:center;font-weight:700;min-width:80px">--</th>
+            <th id="sh-d6" style="padding:10px 8px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);font-size:11px;text-align:center;font-weight:700;min-width:80px">--</th>
+          </tr></thead>
+          <tbody id="sched-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- OT add -->
+    <div class="section">
+      <div class="sec-hdr"><div class="sec-title">🌙 Thêm ca tăng ca (OT)</div></div>
+      <div class="sec-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:10px;align-items:end">
+          <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Nhân viên</div><select class="f-sel" id="ot-nv"><option value="">Chọn NV</option><option>Lan</option><option>Hoa</option><option>Mai</option><option>Thu</option><option>Trang</option></select></div>
+          <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Ngày OT</div><input type="date" class="f-in" id="ot-date" style="margin-bottom:0"></div>
+          <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Giờ bắt đầu</div><input type="time" class="f-in" id="ot-from" value="17:00" style="margin-bottom:0"></div>
+          <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Giờ kết thúc</div><input type="time" class="f-in" id="ot-to" value="20:00" style="margin-bottom:0"></div>
+          <button class="btn btn-g" onclick="addOT()">+ Thêm OT</button>
+        </div>
+        <div id="ot-list" style="margin-top:14px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── DUYỆT NGHỈ PHÉP ── -->
+<div id="pg-leaves" class="screen">
+  <div class="page-hdr">
+    <div><div class="page-title">🏖️ Duyệt Đơn Nghỉ Phép</div><div class="page-sub">Phê duyệt hoặc từ chối yêu cầu nghỉ phép</div></div>
+    <div id="leave-badge" style="background:rgba(200,56,90,.2);border:1px solid var(--p);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;color:var(--ps)">0 đơn chờ duyệt</div>
+  </div>
+  <div class="page-body">
+    <div id="leaves-pending"></div>
+    <div class="section" style="margin-top:16px">
+      <div class="sec-hdr"><div class="sec-title">📋 Lịch sử đơn nghỉ</div></div>
+      <div class="scroll-x">
+        <table class="dtbl">
+          <thead><tr><th>Nhân viên</th><th>Loại nghỉ</th><th>Từ ngày</th><th>Đến ngày</th><th>Lý do</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+          <tbody id="leaves-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── BẢNG LƯƠNG ── -->
+<div id="pg-salary" class="screen">
+  <div class="page-hdr">
+    <div><div class="page-title">💰 Bảng Lương Đầy Đủ</div><div class="page-sub">Lương cơ bản + OT + Lễ + Hoa hồng – Khấu trừ BHXH – Thuế TNCN</div></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="month" id="sal-month" style="padding:7px 10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-size:12px;font-family:inherit" onchange="renderSalary()">
+      <button class="btn btn-b btn-sm" onclick="exportSalaryCSV()">📥 Xuất CSV</button>
+    </div>
+  </div>
+  <div class="page-body">
+    <!-- Summary cards -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px" class="kgrid">
+      <div class="kcard"><div style="font-size:20px">💵</div><div class="knum" id="sal-total-fund" style="font-size:20px">--</div><div class="klbl">Tổng quỹ lương</div></div>
+      <div class="kcard"><div style="font-size:20px">🏥</div><div class="knum" id="sal-total-bh" style="font-size:20px">--</div><div class="klbl">Tổng BH công ty đóng</div></div>
+      <div class="kcard"><div style="font-size:20px">📦</div><div class="knum" id="sal-total-hh" style="font-size:20px">--</div><div class="klbl">Tổng hoa hồng</div></div>
+      <div class="kcard"><div style="font-size:20px">💰</div><div class="knum" id="sal-total-net" style="font-size:20px">--</div><div class="klbl">Tổng thực nhận</div></div>
+    </div>
+    <!-- Position config -->
+    <div class="section">
+      <div class="sec-hdr"><div class="sec-title">💼 Cấu hình lương theo vị trí</div><button class="btn btn-p btn-sm" onclick="togglePosConfig()">✏️ Chỉnh sửa</button></div>
+      <div class="sec-body scroll-x">
+        <table class="dtbl" id="pos-config-tbl">
+          <thead><tr><th>Vị trí</th><th>Loại</th><th>Lương CB (đ)</th><th>Lương BH cơ sở (đ)</th><th>Ghi chú</th></tr></thead>
+          <tbody id="pos-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Salary detail per NV -->
+    <div class="section">
+      <div class="sec-hdr"><div class="sec-title">📋 Chi tiết lương từng nhân viên</div></div>
+      <div class="scroll-x">
+        <table class="dtbl">
+          <thead><tr>
+            <th>Nhân viên</th><th>Vị trí</th><th>Ngày công</th><th>Giờ OT</th>
+            <th style="color:#4ade80">Lương CB</th><th style="color:#4ade80">OT+Lễ</th>
+            <th style="color:#4ade80">PC ăn+ở</th><th style="color:#4ade80">Hoa hồng</th>
+            <th style="color:#4ade80">Thưởng XS</th><th style="color:#fb923c">BHXH-NV</th>
+            <th style="color:#fb923c">BHYT-NV</th><th style="color:#fb923c">BHTN-NV</th>
+            <th style="color:#fb923c">T.TNCN</th>
+            <th style="color:var(--ps);font-size:13px">THỰC NHẬN</th>
+          </tr></thead>
+          <tbody id="sal-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- BHXH công ty -->
+    <div class="section">
+      <div class="sec-hdr"><div class="sec-title">🏥 Phần công ty đóng BHXH/BHYT/BHTN</div></div>
+      <div class="sec-body">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px">
+          <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:12px;text-align:center">
+            <div style="font-size:11px;color:rgba(255,255,255,.4)">BHXH (17.5%)</div>
+            <div style="font-size:18px;font-weight:800;color:#60a5fa" id="co-bhxh">0đ</div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:12px;text-align:center">
+            <div style="font-size:11px;color:rgba(255,255,255,.4)">BHYT (3%)</div>
+            <div style="font-size:18px;font-weight:800;color:#60a5fa" id="co-bhyt">0đ</div>
+          </div>
+          <div style="background:rgba(255,255,255,.04);border-radius:10px;padding:12px;text-align:center">
+            <div style="font-size:11px;color:rgba(255,255,255,.4)">BHTN (1%)</div>
+            <div style="font-size:18px;font-weight:800;color:#60a5fa" id="co-bhtn">0đ</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.7">
+          Tổng chi phí nhân sự thực tế = Tổng thực nhận + Phần công ty đóng BH<br>
+          Mức lương tối thiểu vùng I (2024): <strong style="color:#fff">4.960.000đ</strong> | Mức đóng BH tối đa: <strong style="color:#fff">36.000.000đ/tháng</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── KPI ── -->
+<div id="pg-kpi" class="screen">
+  <div class="page-hdr">
+    <div><div class="page-title">🎯 KPI Nhân Viên</div><div class="page-sub">Xếp hạng & điểm KPI theo tháng</div></div>
+    <input type="month" id="kpi-month" style="padding:7px 10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-size:12px;font-family:inherit" onchange="renderKPI()">
+  </div>
+  <div class="page-body">
+    <div class="nv-grid" id="kpi-cards"></div>
+    <div class="section" style="margin-top:16px">
+      <div class="sec-hdr"><div class="sec-title">📋 Bảng KPI chi tiết</div></div>
+      <div class="scroll-x">
+        <table class="dtbl">
+          <thead><tr><th>NV</th><th>Đơn OK</th><th>Đơn X</th><th>Tỷ lệ OK</th><th>Đi trễ</th><th>Điểm KPI</th><th>% HH</th><th>Xếp hạng</th></tr></thead>
+          <tbody id="kpi-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── HÀNG HOÀN ── -->
+<div id="pg-hoan" class="screen">
+  <div class="page-hdr"><div><div class="page-title">↩️ Hàng Hoàn & Hàng Lỗi</div><div class="page-sub">Giám sát và xử lý</div></div></div>
+  <div class="page-body">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px" class="kgrid" id="hoan-kpis"></div>
+    <div class="section">
+      <div class="sec-hdr"><div class="sec-title">🚨 Tráo hàng / Gian lận</div></div>
+      <div class="sec-body" id="fraud-list"><div style="color:rgba(255,255,255,.3);font-size:13px;text-align:center;padding:16px">✅ Không có tráo hàng</div></div>
+    </div>
+    <div class="section">
+      <div class="sec-hdr"><div class="sec-title">📋 Toàn bộ hàng hoàn</div></div>
+      <div class="scroll-x">
+        <table class="dtbl">
+          <thead><tr><th>Ngày</th><th>Mã đơn</th><th>Loại</th><th>Kết quả</th><th>Mức độ</th><th>NV xử lý</th><th>Hành động</th></tr></thead>
+          <tbody id="hoan-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── NHÂN VIÊN ── -->
+<div id="pg-nhanvien" class="screen">
+  <div class="page-hdr"><div><div class="page-title">👥 Quản lý Nhân Viên</div><div class="page-sub">Xem tổng quan từng người</div></div></div>
+  <div class="page-body"><div class="nv-grid" id="nv-cards"></div></div>
+</div>
+
+<!-- ── CÀI ĐẶT ── -->
+<div id="pg-settings" class="screen">
+  <div class="page-hdr"><div><div class="page-title">⚙️ Cài Đặt & API</div></div></div>
+  <div class="page-body">
+    <div class="section">
+      <div class="sec-hdr"><div class="sec-title">🔌 Kết nối đồng bộ – Google Sheet</div></div>
+      <div class="sec-body">
+        <div style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:12px;line-height:1.7">
+          Nhập URL Google Apps Script để đồng bộ dữ liệu realtime với tất cả thiết bị của NV + CEO.
+        </div>
+        <div class="f-lbl" style="color:rgba(255,255,255,.4)">Apps Script Web App URL</div>
+        <input type="url" class="f-in" id="cfg-api" placeholder="https://script.google.com/macros/s/..." style="margin-bottom:8px">
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <button class="btn btn-g" onclick="testAndSaveApi()" style="flex:1">🔌 Test & Lưu</button>
+          <button class="btn btn-b" onclick="syncNow()" style="flex:1">🔄 Sync ngay</button>
+        </div>
+        <div id="api-status" style="font-size:12px;color:rgba(255,255,255,.4)">Chưa cấu hình</div>
+        <div style="margin-top:12px;padding:10px 12px;background:rgba(255,255,255,.04);border-radius:9px;font-size:11px;color:rgba(255,255,255,.4);line-height:1.8">
+          ✅ Tự động sync mỗi 30 giây<br>
+          ✅ Sync ngay khi NV lưu đơn hàng / hàng hoàn<br>
+          ✅ CEO thấy data realtime từ tất cả NV
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="sec-hdr"><div class="sec-title">🔐 Tài khoản quản lý</div></div>
+      <div class="sec-body">
+        <table class="dtbl">
+          <thead><tr><th>Username</th><th>Tên</th><th>Vai trò</th><th>Quyền</th></tr></thead>
+          <tbody id="acc-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="section">
+      <div class="sec-hdr"><div class="sec-title">📌 Ghi chú triển khai</div></div>
+      <div class="sec-body" style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.8">
+        1. Upload file này lên Google Drive → Mở bằng trình duyệt<br>
+        2. Upload <strong style="color:#fff">MILAVY_App_v2.html</strong> tương tự cho nhân viên<br>
+        3. Paste Apps Script URL vào ô trên để kết nối với Google Sheet<br>
+        4. Đổi mật khẩu mặc định trong code (tìm ACCOUNTS)<br>
+        5. Mật khẩu mặc định: CEO = <strong style="color:var(--ps)">Milavy@2026!</strong> | Manager = <strong style="color:var(--ps)">Manager@2026</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ SẢN PHẨM ══ -->
+<div id="pg-products" class="screen">
+  <div class="page-hdr">
+    <div><div class="page-title">🏷️ Quản lý Sản phẩm & Tồn kho</div><div class="page-sub">SKU format: [Mã hàng]-[Mã màu]-[Size] &nbsp;|&nbsp; Ví dụ: AML08-DE-M</div></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="text" id="ceo-prod-q" placeholder="🔍 Tìm SKU..." style="padding:7px 10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-size:12px;font-family:inherit" oninput="renderCEOProds()">
+      <select id="ceo-prod-f" style="padding:7px 10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-size:12px;font-family:inherit" onchange="renderCEOProds()">
+        <option value="all">Tất cả danh mục</option>
+        <option value="Gym">Gym</option><option value="Tennis">Tennis</option>
+        <option value="Yoga">Yoga</option><option value="Activewear">Activewear</option>
+        <option value="Phụ kiện">Phụ kiện</option><option value="low">⚠️ Sắp hết hàng</option>
+      </select>
+    </div>
+  </div>
+  <div class="page-body">
+    <!-- Summary cards -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px" class="kgrid">
+      <div class="kcard"><div style="font-size:20px">🏷️</div><div class="knum" id="cp-total" style="font-size:22px">0</div><div class="klbl">Tổng SKU</div></div>
+      <div class="kcard" style="border-color:rgba(248,113,113,.3)"><div style="font-size:20px">⚠️</div><div class="knum" id="cp-low" style="font-size:22px;color:#f87171">0</div><div class="klbl">SKU sắp hết</div></div>
+      <div class="kcard" style="border-color:rgba(146,43,33,.3)"><div style="font-size:20px">❌</div><div class="knum" id="cp-out" style="font-size:22px;color:#f87171">0</div><div class="klbl">SKU hết hàng</div></div>
+      <div class="kcard"><div style="font-size:20px">📦</div><div class="knum" id="cp-ok" style="font-size:22px;color:#4ade80">0</div><div class="klbl">SKU còn đủ hàng</div></div>
+    </div>
+    <!-- Alert -->
+    <div id="cp-alerts" style="margin-bottom:16px"></div>
+    <!-- Table -->
+    <div class="section">
+      <div class="sec-hdr"><div class="sec-title">📋 Danh sách sản phẩm</div></div>
+      <div class="scroll-x">
+        <table class="dtbl">
+          <thead><tr>
+            <th>Mã SKU</th><th>Tên sản phẩm</th><th>Danh mục</th>
+            <th>Màu</th><th>Size</th><th>Vị trí kho</th>
+            <th>Tồn kho</th><th>Tối thiểu</th><th>Trạng thái</th><th>Cập nhật tồn</th>
+          </tr></thead>
+          <tbody id="cp-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BIỂU MẪU ══ -->
+<div id="pg-bieumau" class="screen">
+  <div class="page-hdr">
+    <div><div class="page-title">📋 Biểu mẫu quản lý kho</div><div class="page-sub">Xem dữ liệu từ các mẫu BG-01 · KK-02 · HL-01 · 5S-01 · TL-01 · KN-01</div></div>
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-p btn-sm" onclick="showBM('bg')" id="bm-bg">🔄 BG-01 Bàn giao</button>
+      <button class="btn btn-p btn-sm" onclick="showBM('kk')" id="bm-kk">🔍 KK-02 Kiểm kho</button>
+      <button class="btn btn-p btn-sm" onclick="showBM('s5')" id="bm-s5">🌟 5S-01</button>
+      <button class="btn btn-p btn-sm" onclick="showBM('tl')" id="bm-tl">🔍 TL-01 Thất lạc</button>
+      <button class="btn btn-p btn-sm" onclick="showBM('kn')" id="bm-kn">📞 KN-01 Khiếu nại</button>
+    </div>
+  </div>
+  <div class="page-body">
+    <!-- BG-01 -->
+    <div id="bm-bg-content">
+      <div class="section">
+        <div class="sec-hdr"><div class="sec-title">🔄 BG-01 – Lịch sử bàn giao ca</div></div>
+        <div class="scroll-x">
+          <table class="dtbl">
+            <thead><tr><th>Ngày</th><th>Giờ</th><th>NV giao</th><th>NV nhận</th><th>Ca</th><th>Tổng đơn</th><th>Đơn OK</th><th>Đơn X</th><th>Hoàn</th><th>Tráo hàng</th><th>Checklist</th></tr></thead>
+            <tbody id="bm-bg-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- KK-02 -->
+    <div id="bm-kk-content" style="display:none">
+      <div class="section">
+        <div class="sec-hdr"><div class="sec-title">🔍 KK-02 – Kết quả kiểm kho</div></div>
+        <div class="scroll-x">
+          <table class="dtbl">
+            <thead><tr><th>Ngày</th><th>NV</th><th>Loại kiểm</th><th>Khu vực</th><th>Tổng SKU</th><th>Chênh lệch</th><th>Đánh giá</th></tr></thead>
+            <tbody id="bm-kk-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="section" id="bm-kk-detail-sec" style="display:none">
+        <div class="sec-hdr"><div class="sec-title">Chi tiết chênh lệch</div></div>
+        <div class="scroll-x"><table class="dtbl"><thead><tr><th>Vị trí</th><th>SKU</th><th>Tồn HT</th><th>Thực đếm</th><th>Chênh lệch</th></tr></thead><tbody id="bm-kk-detail"></tbody></table></div>
+      </div>
+    </div>
+    <!-- 5S -->
+    <div id="bm-s5-content" style="display:none">
+      <!-- Form chấm điểm 5S của CEO/Giám sát -->
+      <div class="section">
+        <div class="sec-hdr">
+          <div class="sec-title">🌟 CEO/Giám sát – Chấm điểm 5S tuần này</div>
+          <button class="btn btn-p btn-sm" onclick="toggleS5Form()" id="s5-toggle-btn">+ Chấm điểm mới</button>
+        </div>
+        <div id="s5-form-area" style="display:none;padding:16px 18px">
+          <div style="margin-bottom:14px;font-size:12px;color:rgba(255,255,255,.5)">Mỗi hạng mục tối đa 10 điểm. Tổng 100 điểm. ≥85=Đạt ✅ | 70-84=Cần cải thiện ⚠️ | &lt;70=Họp nhóm ❌</div>
+          <div id="bm-s5-rows"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:2px solid var(--p);margin:9px 0">
+            <span style="font-size:14px;font-weight:700;color:#fff">TỔNG ĐIỂM 5S</span>
+            <span style="font-size:20px;font-weight:900;color:var(--p)" id="bm-s5-total">0 / 100</span>
+          </div>
+          <div id="bm-s5-result" style="text-align:center;padding:9px;border-radius:9px;font-size:13px;font-weight:700;margin-bottom:12px">--</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+            <div>
+              <div class="f-lbl" style="color:rgba(255,255,255,.4)">Người chấm</div>
+              <input type="text" class="f-in" id="ceo-s5-by" placeholder="Tên giám sát / CEO..." value="">
+            </div>
+            <div>
+              <div class="f-lbl" style="color:rgba(255,255,255,.4)">Khu vực cần cải thiện</div>
+              <input type="text" class="f-in" id="bm-s5-note" placeholder="Mô tả điểm cần cải thiện...">
+            </div>
+          </div>
+          <button onclick="submitCEOS5()" class="btn btn-p" style="width:100%">✅ Lưu kết quả chấm điểm 5S</button>
+        </div>
+      </div>
+      <!-- Lịch sử -->
+      <div class="section">
+        <div class="sec-hdr"><div class="sec-title">📋 Lịch sử chấm điểm 5S</div></div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 18px" id="bm-s5-cards"></div>
+        <div class="scroll-x" style="padding:0 18px 18px">
+          <table class="dtbl">
+            <thead><tr><th>Ngày</th><th>Người chấm</th><th>Điểm</th><th>Kết quả</th><th>Khu vực cần cải thiện</th></tr></thead>
+            <tbody id="bm-s5-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- TL-01 -->
+    <div id="bm-tl-content" style="display:none">
+      <div class="section">
+        <div class="sec-hdr">
+          <div class="sec-title">🔍 TL-01 – Biên bản thất lạc hàng</div>
+          <button class="btn btn-p btn-sm" onclick="openTL()">+ Lập biên bản mới</button>
+        </div>
+        <div class="sec-body">
+          <table class="dtbl"><thead><tr><th>Ngày</th><th>Mã biên bản</th><th>SKU thất lạc</th><th>Số lượng</th><th>Giá trị</th><th>Nguyên nhân</th><th>Hành động</th></tr></thead><tbody id="bm-tl-tbody"></tbody></table>
+        </div>
+      </div>
+    </div>
+    <!-- KN-01 -->
+    <div id="bm-kn-content" style="display:none">
+      <div class="section">
+        <div class="sec-hdr">
+          <div class="sec-title">📞 KN-01 – Biên bản khiếu nại khách hàng</div>
+          <button class="btn btn-p btn-sm" onclick="openKN()">+ Ghi nhận khiếu nại</button>
+        </div>
+        <div class="sec-body">
+          <table class="dtbl"><thead><tr><th>Ngày</th><th>Mã KN</th><th>Kênh</th><th>Mã đơn</th><th>Loại KN</th><th>Yêu cầu KH</th><th>Kết quả</th><th>Trạng thái</th></tr></thead><tbody id="bm-kn-tbody"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BÁO CÁO ══ -->
+<div id="pg-baocao" class="screen">
+  <div class="page-hdr">
+    <div><div class="page-title">📈 Báo cáo kho</div><div class="page-sub">BC-01 Ngày · BC-02 Tuần · BC-03 Tháng</div></div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <button class="period-btn active" onclick="setBCPeriod('day',this)">📅 BC-01 Ngày</button>
+      <button class="period-btn" onclick="setBCPeriod('week',this)">📅 BC-02 Tuần</button>
+      <button class="period-btn" onclick="setBCPeriod('month',this)">📅 BC-03 Tháng</button>
+      <button class="btn btn-p btn-sm" onclick="exportBC()">📥 Xuất CSV</button>
+    </div>
+  </div>
+  <div class="page-body">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px" class="kgrid">
+      <div class="kcard green"><div style="font-size:20px">📦</div><div class="knum" id="bc-ok" style="font-size:22px">0</div><div class="klbl">Đơn OK</div></div>
+      <div class="kcard red"><div style="font-size:20px">❌</div><div class="knum" id="bc-x" style="font-size:22px">0</div><div class="klbl">Đơn X</div></div>
+      <div class="kcard"><div style="font-size:20px">↩️</div><div class="knum" id="bc-hoan" style="font-size:22px">0</div><div class="klbl">Hàng hoàn</div></div>
+      <div class="kcard orange"><div style="font-size:20px">📊</div><div class="knum" id="bc-rate" style="font-size:22px">0%</div><div class="klbl">Tỷ lệ OK</div></div>
+    </div>
+    <!-- BC theo NV -->
+    <div class="section">
+      <div class="sec-hdr"><div class="sec-title" id="bc-title">📋 Báo cáo ngày hôm nay (BC-01)</div></div>
+      <div class="scroll-x">
+        <table class="dtbl">
+          <thead><tr><th>Nhân viên</th><th>Check-in</th><th>Check-out</th><th>Trạng thái CC</th><th>Đơn OK</th><th>Đơn X</th><th>Tỷ lệ OK</th><th>Hàng hoàn</th><th>Hàng lỗi</th></tr></thead>
+          <tbody id="bc-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Ghi chú bàn giao ca -->
+    <div class="section">
+      <div class="sec-hdr"><div class="sec-title">🔄 Ghi chú bàn giao ca trong kỳ</div></div>
+      <div class="scroll-x"><table class="dtbl"><thead><tr><th>Ca</th><th>NV giao</th><th>NV nhận</th><th>Sự cố</th><th>Lưu ý</th></tr></thead><tbody id="bc-bg-tbody"></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TL-01 -->
+<div class="modal-bg" id="tl-mo">
+<div style="background:#1a2035;border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:24px;width:90%;max-width:500px;max-height:90vh;overflow-y:auto">
+  <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:16px">🔍 TL-01 – Biên bản thất lạc hàng</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Mã SKU thất lạc</div><input type="text" class="f-in" id="tl-sku" placeholder="AML08-DE-M"></div>
+    <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Số lượng</div><input type="number" class="f-in" id="tl-qty" value="1" min="1"></div>
+    <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Giá trị ước tính (đ)</div><input type="number" class="f-in" id="tl-value" placeholder="0"></div>
+    <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Vị trí kho gần nhất</div><input type="text" class="f-in" id="tl-loc" placeholder="T1-A01-03"></div>
+  </div>
+  <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Nguyên nhân xác định</div>
+    <select class="f-in" id="tl-cause" style="appearance:none"><option>Chưa xác định được</option><option>Lỗi sắp xếp kho</option><option>Nghi gian lận nội bộ</option><option>Mất trong quá trình vận chuyển</option></select>
+  </div>
+  <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Mô tả diễn biến phát hiện</div><textarea class="f-in" id="tl-desc" rows="3" placeholder="Mô tả chi tiết..." style="resize:none"></textarea></div>
+  <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Hành động xử lý</div>
+    <select class="f-in" id="tl-action" style="appearance:none"><option>Tiếp tục điều tra</option><option>Bồi thường theo quy định</option><option>Báo công an</option><option>Lưu hồ sơ</option></select>
+  </div>
+  <div style="display:flex;gap:8px;margin-top:14px">
+    <button onclick="submitTL()" style="flex:1;padding:12px;background:rgba(200,56,90,.4);border:1px solid var(--p);border-radius:10px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">📋 Lập biên bản</button>
+    <button onclick="closeMoBG('tl-mo')" style="padding:12px 16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;font-size:14px;cursor:pointer;font-family:inherit">Đóng</button>
+  </div>
+</div></div>
+
+<!-- MODAL KN-01 -->
+<div class="modal-bg" id="kn-mo">
+<div style="background:#1a2035;border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:24px;width:90%;max-width:500px;max-height:90vh;overflow-y:auto">
+  <div style="font-size:16px;font-weight:800;color:#fff;margin-bottom:16px">📞 KN-01 – Khiếu nại khách hàng</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Mã đơn hàng</div><input type="text" class="f-in" id="kn-order" placeholder="Mã đơn..."></div>
+    <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Kênh mua</div>
+      <select class="f-in" id="kn-channel" style="appearance:none"><option>Shopee</option><option>TikTok</option><option>Lazada</option><option>Facebook</option><option>Website</option></select>
+    </div>
+    <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Loại khiếu nại</div>
+      <select class="f-in" id="kn-type" style="appearance:none"><option>Thiếu hàng</option><option>Sai hàng</option><option>Hàng lỗi</option><option>Tráo hàng</option><option>Giao trễ</option><option>Khác</option></select>
+    </div>
+    <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Yêu cầu của khách</div>
+      <select class="f-in" id="kn-req" style="appearance:none"><option>Gửi bù hàng</option><option>Hoàn tiền toàn bộ</option><option>Hoàn tiền một phần</option><option>Đổi hàng</option><option>Khác</option></select>
+    </div>
+  </div>
+  <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Nội dung khiếu nại</div><textarea class="f-in" id="kn-desc" rows="3" placeholder="Mô tả chi tiết..." style="resize:none"></textarea></div>
+  <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Kết quả xác minh kho</div>
+    <select class="f-in" id="kn-verify" style="appearance:none"><option>Kho đúng – Lỗi ĐVVC</option><option>Kho sai – Nhận lỗi</option><option>Khách gian lận</option><option>Chưa xác định</option></select>
+  </div>
+  <div><div class="f-lbl" style="color:rgba(255,255,255,.4)">Hướng giải quyết</div><textarea class="f-in" id="kn-resolve" rows="2" placeholder="Hướng xử lý..." style="resize:none"></textarea></div>
+  <div style="display:flex;gap:8px;margin-top:14px">
+    <button onclick="submitKN()" style="flex:1;padding:12px;background:rgba(200,56,90,.4);border:1px solid var(--p);border-radius:10px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">📞 Lưu khiếu nại</button>
+    <button onclick="closeMoBG('kn-mo')" style="padding:12px 16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;font-size:14px;cursor:pointer;font-family:inherit">Đóng</button>
+  </div>
+</div></div>
+
+
+<!-- ══ CHẤM ĐIỂM 5S – CEO ══ -->
+<div id="pg-s5" class="screen">
+  <div class="page-hdr">
+    <div><div class="page-title">🌟 Chấm điểm 5S hàng tuần</div><div class="page-sub">Mẫu 5S-01 – Giám sát / Quản lý chấm điểm</div></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <select id="s5-nv-sel" style="padding:7px 10px;background:#1e2535;border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;font-size:12px;font-family:inherit">
+        <option value="">Tất cả nhân viên</option>
+        <option>Lan</option><option>Hoa</option><option>Mai</option><option>Thu</option><option>Trang</option>
+      </select>
+    </div>
+  </div>
+  <div class="page-body">
+    <!-- Form chấm điểm mới -->
+    <div class="section">
+      <div class="sec-hdr" style="background:#1a2030;border-bottom:1px solid rgba(255,255,255,.1)">
+        <div class="sec-title">✏️ Chấm điểm 5S tuần này</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.4)">Quản lý chấm điểm – không phải nhân viên tự chấm</div>
+      </div>
+      <div style="padding:16px 18px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+          <div>
+            <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);margin-bottom:5px">NHÂN VIÊN ĐƯỢC CHẤM</div>
+            <select class="f-in" id="s5-nv" style="width:100%">
+              <option value="">-- Chọn NV --</option>
+              <option>Lan</option><option>Hoa</option><option>Mai</option><option>Thu</option><option>Trang</option>
+              <option value="ca-sang">Cả ca Sáng</option><option value="ca-chieu">Cả ca Chiều</option><option value="toan-kho">Toàn kho</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);margin-bottom:5px">TUẦN / NGÀY</div>
+            <input type="date" class="f-in" id="s5-date" style="width:100%">
+          </div>
+        </div>
+        <div id="ceo-s5-rows"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-top:2px solid #C8385A;margin-top:9px">
+          <span style="font-size:14px;font-weight:700;color:#fff">TỔNG ĐIỂM 5S</span>
+          <span style="font-size:22px;font-weight:900;color:#C8385A" id="ceo-s5-total">0 / 100</span>
+        </div>
+        <div id="ceo-s5-result" style="text-align:center;padding:10px;border-radius:10px;font-size:14px;font-weight:700;margin-bottom:14px">--</div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);margin-bottom:5px">KHU VỰC CẦN CẢI THIỆN</div>
+          <textarea class="f-in" id="ceo-s5-note" rows="3" placeholder="Ghi chú khu vực cần cải thiện..." style="width:100%;resize:none"></textarea>
+        </div>
+        <button onclick="submitCEOS5()" style="width:100%;margin-top:12px;padding:13px;background:linear-gradient(135deg,#C8385A,#a01d3f);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">✅ Lưu kết quả 5S</button>
+      </div>
+    </div>
+    <!-- Lịch sử -->
+    <div class="section">
+      <div class="sec-hdr"><div class="sec-title">📊 Lịch sử chấm điểm 5S</div></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 18px" id="ceo-s5-cards"></div>
+      <div class="scroll-x" style="padding:0 18px 18px">
+        <table class="dtbl">
+          <thead><tr><th>Ngày</th><th>NV/Ca</th><th>Điểm</th><th>Kết quả</th><th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>Ghi chú</th><th>Người chấm</th></tr></thead>
+          <tbody id="ceo-s5-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- .content -->
+
+<nav class="bot-nav" id="bot-nav" style="display:none">
+  <div class="bot-nav-inner">
+    <button class="bnb active" id="bnb-overview" onclick="goPage('overview')"><span class="bico">📊</span>Tổng quan</button>
+    <button class="bnb" id="bnb-pipeline"  onclick="goPage('pipeline')"><span class="bico">🔄</span>Pipeline</button>
+    <button class="bnb" id="bnb-schedule"  onclick="goPage('schedule')"><span class="bico">📅</span>Xếp ca</button>
+    <button class="bnb" id="bnb-leaves"    onclick="goPage('leaves')"><span class="bico">🏖️</span>Nghỉ phép</button>
+    <button class="bnb" id="bnb-salary"    onclick="goPage('salary')"><span class="bico">💰</span>Lương</button>
+    <button class="bnb" id="bnb-kpi"       onclick="goPage('kpi')"><span class="bico">🎯</span>KPI</button>
+    <button class="bnb" id="bnb-hoan"      onclick="goPage('hoan')"><span class="bico">↩️</span>Hàng hoàn</button>
+    <button class="bnb" id="bnb-products"  onclick="goPage('products')"><span class="bico">🏷️</span>Sản phẩm</button>
+    <button class="bnb" id="bnb-bieumau"   onclick="goPage('bieumau')"><span class="bico">📋</span>Biểu mẫu</button>
+    <button class="bnb" id="bnb-baocao"    onclick="goPage('baocao')"><span class="bico">📈</span>Báo cáo</button>
+    <button class="bnb" id="bnb-s5"        onclick="goPage('s5')"><span class="bico">🌟</span>5S</button>
+    <button class="bnb" id="bnb-nhanvien"  onclick="goPage('nhanvien')"><span class="bico">👥</span>Nhân viên</button>
+    <button class="bnb" id="bnb-settings"  onclick="goPage('settings')"><span class="bico">⚙️</span>Cài đặt</button>
+  </div>
+</nav>
+
+</div><!-- #main-app -->
+
+<script>
+// ═══ CONFIG & AUTH ════════════════════════════════════════════════════
+const ACCOUNTS=[
+  {user:'ceo',     passHash:h('Milavy@2026!'), name:'Chị Mai – COO', role:'CEO',     ava:'👑',canAll:true},
+  {user:'manager', passHash:h('Manager@2026'), name:'Quản lý kho',   role:'Manager', ava:'🗂️',canAll:true},
+  {user:'ketoan',  passHash:h('KeToan@2026'),  name:'Kế toán',       role:'Kế toán', ava:'💼',canAll:false},
+];
+function h(s){let x=0;for(let i=0;i<s.length;i++){x=((x<<5)-x)+s.charCodeAt(i);x|=0;}return x.toString(16);}
+
+const POSITIONS={
+  'NV Kho':           {ico:'📦',type:'Full-time',base:6000000, bhBase:6000000},
+  'Tổ trưởng kho':   {ico:'👑',type:'Full-time',base:8000000, bhBase:8000000},
+  'CSKH':             {ico:'💬',type:'Full-time',base:6500000, bhBase:6500000},
+  'Marketing':        {ico:'📣',type:'Full-time',base:7000000, bhBase:7000000},
+  'Quản lý vận hành':{ico:'🗂️',type:'Full-time',base:12000000,bhBase:12000000},
+  'Kế toán':          {ico:'💼',type:'Full-time',base:8000000, bhBase:8000000},
+  'NV Part-time':     {ico:'⏱️',type:'Part-time',base:35000,   bhBase:0,perHour:true},
+};
+const NV_POS={Lan:'NV Kho',Hoa:'NV Kho',Mai:'Tổ trưởng kho',Thu:'CSKH',Trang:'Marketing'};
+const NV_LIST=['Lan','Hoa','Mai','Thu','Trang'];
+const NV_AVA=['🌸','🌻','🌺','🌷','🌹'];
+const NV_COL=['#C8385A','#1A6632','#1A5276','#BA4A00','#6C3483'];
+const HOLIDAYS_2026=['2026-01-01','2026-04-30','2026-05-01','2026-09-02','2026-01-28','2026-01-29','2026-01-30'];
+const OT_RATE=1.5,OT_HOL=2.0;
+const BH_NV={bhxh:.08,bhyt:.015,bhtn:.01};
+const BH_CO={bhxh:.175,bhyt:.03,bhtn:.01};
+const CFG={ngayCong:26,pca:25000,pco:500000,nguongPCO:22,hh:500,kpiXS:97,thuongXS:500000};
+const STEPS=['Nhận đơn','Lấy hàng','Đóng gói','Bàn giao'];
+const STEP_ICO=['📋','📦','🎁','🚚'];
+
+let curUser=null,curPeriod='day';
+let weekOffset=0;
+let schedules=JSON.parse(localStorage.getItem('mv_schedules')||'{}');
+let otList=JSON.parse(localStorage.getItem('mv_ot')||'[]');
+
+// ═══ DATA ════════════════════════════════════════════════════════════
+const getRecords=()=>JSON.parse(localStorage.getItem('mv_records')||'[]');
+const getAtt    =()=>JSON.parse(localStorage.getItem('mv_att')||'[]');
+const getLeaves =()=>JSON.parse(localStorage.getItem('mv_leaves')||'[]');
+const getHoan   =()=>JSON.parse(localStorage.getItem('mv_hoan')||'[]');
+const saveLeaves=l=>localStorage.setItem('mv_leaves',JSON.stringify(l));
+const saveSchedules=()=>localStorage.setItem('mv_schedules',JSON.stringify(schedules));
+const saveOT=()=>localStorage.setItem('mv_ot',JSON.stringify(otList));
+const today=()=>new Date().toISOString().slice(0,10);
+const thisMonth=()=>new Date().toISOString().slice(0,7);
+const fmt=n=>new Intl.NumberFormat('vi-VN').format(Math.round(n))+'đ';
+
+// ═══ LOGIN ════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('l-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+  document.getElementById('l-user').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('l-pass').focus();});
+  const now=new Date();
+  ['sal-month','kpi-month'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=now.toISOString().slice(0,7);});
+  document.getElementById('pip-date').value=today();
+  document.getElementById('ot-date').value=today();
+  const sess=localStorage.getItem('ceo_sess');
+  if(sess){const s=JSON.parse(sess);if(Date.now()<s.exp){const a=ACCOUNTS.find(x=>x.user===s.user);if(a){curUser=a;showApp();return;}}}
+});
+function doLogin(){
+  const user=document.getElementById('l-user').value.trim().toLowerCase();
+  const pass=document.getElementById('l-pass').value;
+  const acc=ACCOUNTS.find(a=>a.user===user&&a.passHash===h(pass));
+  if(!acc){document.getElementById('l-err').style.display='block';setTimeout(()=>document.getElementById('l-err').style.display='none',3000);return;}
+  curUser=acc;
+  localStorage.setItem('ceo_sess',JSON.stringify({user:acc.user,exp:Date.now()+8*3600000}));
+  showApp();
+}
+function showApp(){document.body.classList.remove("app-hidden");
+  const bn=document.getElementById("bot-nav");if(bn)bn.style.display="block";
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('main-app').style.display='block';
+  document.getElementById('s-uname').textContent=curUser.name;
+  document.getElementById('s-urole').textContent=curUser.role;
+  document.getElementById('s-ava').textContent=curUser.ava;
+  document.getElementById('s-upd').textContent='Cập nhật: '+new Date().toLocaleTimeString('vi-VN');
+  setInterval(()=>{const el=document.getElementById('m-clk');if(el)el.textContent=new Date().toTimeString().slice(0,5);},1000);
+  renderOverview();renderPosTbl();renderAccTable();
+}
+function doLogout(){localStorage.removeItem('ceo_sess');curUser=null;document.getElementById('main-app').style.display='none';document.getElementById('login-screen').style.display='flex';document.getElementById('l-pass').value='';}
+
+// ═══ NAVIGATION ═══════════════════════════════════════════════════════
+function goPage(name){
+  // Safety check
+  const pgEl = document.getElementById('pg-'+name);
+  const niEl = document.getElementById('ni-'+name);
+  if(!pgEl){ console.warn('Page not found: pg-'+name); return; }
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  pgEl.classList.add('active');
+  if(niEl) niEl.classList.add('active');
+  closeSB();
+  // All render functions
+  const map={
+    overview:  renderOverview,
+    pipeline:  renderPipeline,
+    schedule:  renderSchedule,
+    leaves:    renderLeaves,
+    salary:    renderSalary,
+    kpi:       renderKPI,
+    hoan:      renderHoan,
+    nhanvien:  renderNV,
+    products:  renderCEOProds,
+    bieumau:   ()=>{ showBM('bg'); },
+    baocao:    renderBC,
+    s5:        ()=>{ /* 5S handled by toggle button */ },
+    settings:  ()=>{}
+  };
+  if(map[name]) map[name]();
+  // Sync bottom nav active
+  document.querySelectorAll('.bnb').forEach(b=>b.classList.remove('active'));
+  const bnbEl=document.getElementById('bnb-'+name);
+  if(bnbEl) bnbEl.classList.add('active');
+}
+function setPeriod(p,btn){curPeriod=p;document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderOverview();}
+function refreshAll(){document.getElementById('s-upd').textContent='Cập nhật: '+new Date().toLocaleTimeString('vi-VN');renderOverview();}
+function toggleSB(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show');}
+function closeSB(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show');}
+
+// ═══ FILTER HELPERS ═══════════════════════════════════════════════════
+function filterByPeriod(records){
+  const t=today(),m=thisMonth();
+  return records.filter(r=>{
+    if(curPeriod==='day')return r.date===t;
+    if(curPeriod==='week'){const d=new Date(r.date),n=new Date();return(n-d)/(86400000)<7&&d<=n;}
+    return r.date?.startsWith(m);
+  });
+}
+
+// ═══ OVERVIEW ═════════════════════════════════════════════════════════
+function renderOverview(){
+  const recs=getRecords(),att=getAtt(),hoan=getHoan();
+  const t=today();
+  document.getElementById('ov-date').textContent=new Date().toLocaleDateString('vi-VN',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric'});
+  const filtered=filterByPeriod(recs);
+  const okN=filtered.filter(r=>r.status==='OK').length;
+  const xN =filtered.filter(r=>r.status==='X').length;
+  document.getElementById('ov-ok').textContent=okN;
+  document.getElementById('ov-x').textContent=xN;
+  const pct=filtered.length?Math.round(okN/filtered.length*100):0;
+  document.getElementById('ov-ok-t').textContent=pct+'% tỷ lệ OK';
+  document.getElementById('ov-ok-t').className='ktrend '+(pct>=95?'up':'dn');
+  document.getElementById('ov-x-t').textContent=xN>0?'Cần xem xét':'Tốt';
+  const attT=att.filter(r=>r.date===t);
+  const ci=[...new Set(attT.map(r=>r.nv))].length;
+  document.getElementById('ov-att').textContent=ci;
+  document.getElementById('ov-att-t').textContent='/ '+NV_LIST.length+' nhân viên';
+  const inPipe=recs.filter(r=>r.date===t&&r.pipeStep>0&&r.pipeStep<4).length;
+  document.getElementById('ov-pipe').textContent=inPipe;
+  document.getElementById('ov-pipe-t').textContent='chưa bàn giao';
+  // Alerts
+  const fraudN=hoan.filter(r=>r.date===t&&r.isFraud).length;
+  const alerts=[];
+  if(fraudN>0)alerts.push(`<div class="alert al-red"><div style="font-size:18px">🚨</div><div><div style="font-size:13px;font-weight:700;color:#fff">${fraudN} vụ tráo hàng hôm nay!</div><div style="font-size:12px;color:rgba(255,255,255,.6)">Kiểm tra tab Hàng hoàn ngay</div></div></div>`);
+  if(ci<NV_LIST.length)alerts.push(`<div class="alert al-or"><div style="font-size:18px">⚠️</div><div><div style="font-size:13px;font-weight:700;color:#fff">${NV_LIST.length-ci} NV chưa check-in</div></div></div>`);
+  if(pct>0&&pct<95)alerts.push(`<div class="alert al-or"><div style="font-size:18px">📉</div><div><div style="font-size:13px;font-weight:700;color:#fff">Tỷ lệ OK chỉ ${pct}% – Thấp hơn mục tiêu 95%</div></div></div>`);
+  document.getElementById('ov-alerts').innerHTML=alerts.join('');
+  // Per NV
+  document.getElementById('ov-nv').innerHTML=NV_LIST.map((nv,i)=>{
+    const nr=filtered.filter(r=>r.nv===nv);
+    const ok=nr.filter(r=>r.status==='OK').length;
+    const x=nr.filter(r=>r.status==='X').length;
+    const p=nr.length?Math.round(ok/nr.length*100):0;
+    const rec=attT.find(r=>r.nv===nv);
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+      <div style="width:28px;height:28px;border-radius:50%;background:${NV_COL[i]};display:flex;align-items:center;justify-content:center;font-size:14px">${NV_AVA[i]}</div>
+      <div style="flex:1"><div style="font-size:13px;font-weight:700;color:#fff">${nv}</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.4)">${rec?(rec.timeOut?rec.timeIn+'→'+rec.timeOut:'Vào '+rec.timeIn):'⚪ Chưa check-in'}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:14px;font-weight:800;color:#4ade80">${ok} OK</div>
+        <div style="font-size:11px;color:#f87171">${x} X &nbsp;${p}%</div>
+      </div>
+    </div>`;
+  }).join('');
+  // Chart 7 days
+  const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().slice(0,10));}
+  const counts=days.map(d=>recs.filter(r=>r.date===d&&r.status==='OK').length);
+  const max=Math.max(...counts,1);
+  document.getElementById('ov-chart').innerHTML=days.map((d,i)=>`
+    <div class="bar-col"><div class="bar-val">${counts[i]}</div>
+      <div class="bar" style="height:${Math.round(counts[i]/max*80)+4}px;background:linear-gradient(0deg,#C8385A,#F5A7B8)"></div>
+      <div class="bar-lbl">${d.slice(5).replace('-','/')}</div>
+    </div>`).join('');
+  // Pipeline overview
+  const pipeRecs=recs.filter(r=>r.date===t&&r.pipeStep);
+  const pCounts=[0,0,0,0];
+  pipeRecs.forEach(r=>{const s=(r.pipeStep||1)-1;if(s>=0&&s<4)pCounts[s]++;});
+  document.getElementById('ov-pipeline').innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+      ${STEPS.map((s,i)=>`<div style="background:rgba(255,255,255,.05);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:20px">${STEP_ICO[i]}</div>
+        <div style="font-size:22px;font-weight:800;color:#fff;margin:4px 0">${pCounts[i]}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.5);font-weight:600">${s}</div>
+      </div>`).join('')}
+    </div>`;
+}
+
+// ═══ PIPELINE ════════════════════════════════════════════════════════
+function renderPipeline(){
+  const date=document.getElementById('pip-date').value||today();
+  const nvF=document.getElementById('pip-nv').value;
+  const recs=getRecords().filter(r=>r.date===date&&(nvF?r.nv===nvF:true));
+  // Kanban
+  const kanban=document.getElementById('kanban-cols');
+  kanban.innerHTML=STEPS.map((sName,si)=>{
+    const items=recs.filter(r=>(r.pipeStep||0)===si+1);
+    return `<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden">
+      <div style="padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:6px">
+        <span style="font-size:16px">${STEP_ICO[si]}</span>
+        <span style="font-size:12px;font-weight:700;color:#fff">${sName}</span>
+        <span style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);padding:2px 8px;border-radius:20px;font-size:11px;margin-left:auto">${items.length}</span>
+      </div>
+      <div style="padding:8px;max-height:300px;overflow-y:auto">
+        ${items.length?items.map(r=>`
+          <div style="background:rgba(255,255,255,.06);border-radius:8px;padding:8px;margin-bottom:6px;font-size:12px">
+            <div style="font-weight:700;color:#60a5fa;font-family:monospace">${r.orderId}</div>
+            <div style="color:rgba(255,255,255,.5);margin-top:2px">${r.nv} • ${r.time||'--'}</div>
+          </div>`).join(''):'<div style="color:rgba(255,255,255,.3);font-size:12px;text-align:center;padding:16px">Không có đơn</div>'}
+      </div>
+    </div>`;
+  }).join('');
+  // Table
+  const tbody=document.getElementById('pip-tbody');
+  if(!recs.length){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:rgba(255,255,255,.3);padding:24px">Không có dữ liệu</td></tr>';return;}
+  tbody.innerHTML=[...recs].reverse().map(r=>{
+    const step=r.pipeStep||0;
+    const stepCells=STEPS.map((s,i)=>{
+      const hist=r.stepHistory?.find(h=>h.step===i+1);
+      if(hist)return`<td><div class="bd b-done" style="font-size:11px">✓ ${hist.nv}</div><div style="font-size:10px;color:rgba(255,255,255,.3)">${hist.time}</div></td>`;
+      if(i+1===step+1)return`<td><span class="bd b-info">⏳ Tiếp theo</span></td>`;
+      return`<td style="color:rgba(255,255,255,.2)">–</td>`;
+    });
+    return`<tr>
+      <td style="font-family:monospace;color:#60a5fa;font-size:12px">${r.orderId}</td>
+      <td><strong>${r.nv}</strong></td><td>${r.ca||'–'}</td><td>${r.time||'–'}</td>
+      ${stepCells.join('')}
+      <td><span class="bd ${r.status==='OK'?'b-ok':r.status==='X'?'b-x':'b-pend'}">${r.status==='OK'?'✅ Xong':r.status==='X'?'❌ X':'⏳ Xử lý'}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ═══ XẾP CA ══════════════════════════════════════════════════════════
+const SHIFT_TYPES=[
+  {val:'',     lbl:'○',       cls:'sc-none'},
+  {val:'Sáng', lbl:'☀️ Sáng', cls:'sc-sang'},
+  {val:'Chiều',lbl:'🌆 Chiều',cls:'sc-chieu'},
+  {val:'PT',   lbl:'⏱️ PT',   cls:'sc-pt'},
+  {val:'OT',   lbl:'🌙 OT',   cls:'sc-ot'},
+  {val:'Off',  lbl:'🏖️ Nghỉ', cls:'sc-off'},
+];
+function getWeekDates(){
+  const now=new Date();now.setDate(now.getDate()+weekOffset*7);
+  const dow=now.getDay();const mon=new Date(now);mon.setDate(now.getDate()-dow+1);
+  return Array.from({length:7},(_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return d.toISOString().slice(0,10);});
+}
+function renderSchedule(){
+  const days=getWeekDates();
+  const start=days[0].slice(5).replace('-','/'),end=days[6].slice(5).replace('-','/');
+  document.getElementById('week-lbl').textContent=`${start} – ${end}`;
+  const dayNames=['T2','T3','T4','T5','T6','T7','CN'];
+  days.forEach((d,i)=>{
+    const el=document.getElementById('sh-d'+i);
+    if(el)el.textContent=dayNames[i]+'\n'+d.slice(8);
+  });
+  const tbody=document.getElementById('sched-body');
+  tbody.innerHTML=NV_LIST.map((nv,ni)=>`
+    <tr>
+      <td style="padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.05)">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:16px">${NV_AVA[ni]}</span>
+          <div><div style="font-size:13px;font-weight:700;color:#fff">${nv}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.4)">${NV_POS[nv]||'NV Kho'}</div></div>
+        </div>
+      </td>
+      ${days.map((d,di)=>{
+        const key=`${nv}_${d}`;
+        const val=schedules[key]||'';
+        const st=SHIFT_TYPES.find(s=>s.val===val)||SHIFT_TYPES[0];
+        return`<td style="padding:4px;border-bottom:1px solid rgba(255,255,255,.05)">
+          <div class="shift-cell ${st.cls}" onclick="cycleShift('${nv}','${d}',this)" title="Click để đổi ca">
+            <span style="font-size:14px">${st.lbl}</span>
+          </div>
+        </td>`;
+      }).join('')}
+    </tr>`).join('');
+  renderOTList();
+}
+function cycleShift(nv,date,el){
+  const key=`${nv}_${date}`;
+  const cur=schedules[key]||'';
+  const idx=SHIFT_TYPES.findIndex(s=>s.val===cur);
+  const next=SHIFT_TYPES[(idx+1)%SHIFT_TYPES.length];
+  schedules[key]=next.val;saveSchedules();
+  el.className=`shift-cell ${next.cls}`;
+  el.innerHTML=`<span style="font-size:14px">${next.lbl}</span>`;
+}
+function prevWeek(){weekOffset--;renderSchedule();}
+function nextWeek(){weekOffset++;renderSchedule();}
+function addOT(){
+  const nv=document.getElementById('ot-nv').value;
+  const date=document.getElementById('ot-date').value;
+  const from=document.getElementById('ot-from').value;
+  const to=document.getElementById('ot-to').value;
+  if(!nv||!date){alert('Chọn NV và ngày!');return;}
+  const [h1,m1]=from.split(':').map(Number);
+  const [h2,m2]=to.split(':').map(Number);
+  const hours=Math.max(0,((h2*60+m2)-(h1*60+m1))/60);
+  otList.push({id:Date.now(),nv,date,from,to,hours:hours.toFixed(1),isHoliday:HOLIDAYS_2026.includes(date),approved:true});
+  saveOT();
+  // Also mark in schedule
+  schedules[`${nv}_${date}`]='OT';saveSchedules();
+  renderOTList();renderSchedule();
+}
+function renderOTList(){
+  const el=document.getElementById('ot-list');
+  if(!otList.length){el.innerHTML='<div style="color:rgba(255,255,255,.3);font-size:13px">Chưa có ca OT nào</div>';return;}
+  el.innerHTML=`<table class="dtbl" style="margin-top:8px"><thead><tr><th>NV</th><th>Ngày</th><th>Giờ</th><th>Số giờ OT</th><th>Ngày lễ</th><th>Xóa</th></tr></thead><tbody>
+    ${[...otList].reverse().map(o=>`<tr>
+      <td><strong>${o.nv}</strong></td>
+      <td>${o.date}</td>
+      <td>${o.from} – ${o.to}</td>
+      <td style="color:#34d399;font-weight:700">${o.hours}h</td>
+      <td>${o.isHoliday?'<span class="bd b-fraud">🎉 Lễ</span>':'–'}</td>
+      <td><button onclick="removeOT(${o.id})" class="btn btn-r btn-sm">Xóa</button></td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+function removeOT(id){otList=otList.filter(o=>o.id!==id);saveOT();renderOTList();}
+
+// ═══ DUYỆT NGHỈ ══════════════════════════════════════════════════════
+function renderLeaves(){
+  const leaves=getLeaves();
+  const pending=leaves.filter(l=>l.status==='pending');
+  document.getElementById('leave-badge').textContent=`${pending.length} đơn chờ duyệt`;
+  const pendEl=document.getElementById('leaves-pending');
+  pendEl.innerHTML=pending.length?pending.map(l=>`
+    <div class="leave-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div>
+          <div style="font-size:15px;font-weight:700;color:#fff">${NV_AVA[NV_LIST.indexOf(l.nv)]||'👤'} ${l.nv} – ${l.type}</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:2px">${l.from} đến ${l.to}</div>
+        </div>
+        <span class="bd b-pend">⏳ Chờ duyệt</span>
+      </div>
+      <div style="font-size:13px;color:rgba(255,255,255,.7);margin-bottom:12px">📝 ${l.reason}</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-g" onclick="approveLeave(${l.id},true)">✅ Duyệt</button>
+        <button class="btn btn-r" onclick="approveLeave(${l.id},false)">❌ Từ chối</button>
+      </div>
+    </div>`).join(''):'<div class="alert al-gr"><div style="font-size:18px">✅</div><div><div style="font-size:13px;font-weight:700;color:#fff">Không có đơn nghỉ nào chờ duyệt</div></div></div>';
+  const tbody=document.getElementById('leaves-tbody');
+  if(!leaves.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,.3);padding:24px">Chưa có đơn nghỉ</td></tr>';return;}
+  tbody.innerHTML=[...leaves].reverse().map(l=>{
+    const sc=l.status==='approved'?'b-ok':l.status==='rejected'?'b-x':'b-pend';
+    const st=l.status==='approved'?'✅ Đã duyệt':l.status==='rejected'?'❌ Từ chối':'⏳ Chờ';
+    return`<tr>
+      <td><strong>${l.nv}</strong></td><td>${l.type}</td><td>${l.from}</td><td>${l.to}</td>
+      <td style="color:rgba(255,255,255,.6);font-size:12px">${l.reason?.slice(0,30)||'–'}</td>
+      <td><span class="bd ${sc}">${st}</span></td>
+      <td>${l.status==='pending'?`<button class="btn btn-g btn-sm" onclick="approveLeave(${l.id},true)">✓</button> <button class="btn btn-r btn-sm" onclick="approveLeave(${l.id},false)">✗</button>`:'–'}</td>
+    </tr>`;
+  }).join('');
+}
+function approveLeave(id,approved){
+  const leaves=getLeaves();
+  const idx=leaves.findIndex(l=>l.id===id);
+  if(idx<0)return;
+  leaves[idx].status=approved?'approved':'rejected';
+  leaves[idx].approvedBy=curUser?.name;
+  leaves[idx].approvedAt=new Date().toISOString();
+  saveLeaves(leaves);renderLeaves();
+}
+
+// ═══ LƯƠNG ════════════════════════════════════════════════════════════
+function renderPosTbl(){
+  const tbody=document.getElementById('pos-tbody');
+  tbody.innerHTML=Object.entries(POSITIONS).map(([name,p])=>`
+    <tr>
+      <td><strong>${p.ico} ${name}</strong></td>
+      <td><span class="bd ${p.perHour?'b-warn':'b-info'}">${p.type}</span></td>
+      <td style="color:#4ade80;font-weight:700">${p.perHour?fmt(p.base)+'/giờ':fmt(p.base)}</td>
+      <td>${p.bhBase?fmt(p.bhBase):'Không đóng BH'}</td>
+      <td style="font-size:12px;color:rgba(255,255,255,.5)">${p.perHour?'Tính theo giờ × 8h/ngày':''}</td>
+    </tr>`).join('');
+}
+function togglePosConfig(){}
+function calcSalary(nv,month){
+  const pos=POSITIONS[NV_POS[nv]||'NV Kho'];
+  const recs=getRecords().filter(r=>r.nv===nv&&r.date?.startsWith(month));
+  const att =getAtt().filter(r=>r.nv===nv&&r.date?.startsWith(month));
+  const myOT=otList.filter(o=>o.nv===nv&&o.date?.startsWith(month));
+  const okN=recs.filter(r=>r.status==='OK').length;
+  const ngayCong=att.length;
+  const otHours=att.reduce((s,r)=>s+(r.otHours||0),0)+myOT.reduce((s,o)=>s+Number(o.hours),0);
+  const holDays=att.filter(r=>r.isHoliday).length+myOT.filter(o=>o.isHoliday).length;
+  let luongCB,otPay=0,holPay=0;
+  if(pos.perHour){luongCB=pos.base*ngayCong*8;otPay=pos.base*otHours*OT_RATE;}
+  else{luongCB=pos.base*ngayCong/CFG.ngayCong;otPay=pos.base/CFG.ngayCong/8*otHours*OT_RATE;holPay=pos.base/CFG.ngayCong*holDays*(OT_HOL-1);}
+  const kpiDrop=att.reduce((s,r)=>s+(r.status?.includes('>15')?3:r.status?.includes('5-15')?2:r.status?.includes('<5')?1:0),0);
+  const kpi=Math.max(60,100-kpiDrop);
+  const pctHH=kpi>=97?1:kpi>=90?1:kpi>=86?.9:kpi>=80?.8:.6;
+  const hh=okN*CFG.hh*pctHH;
+  const xs=kpi>=CFG.kpiXS?CFG.thuongXS:0;
+  const pcA=CFG.pca*ngayCong;
+  const pcO=ngayCong>=CFG.nguongPCO?CFG.pco:Math.round(CFG.pco/26*ngayCong);
+  const totalIncome=luongCB+otPay+holPay+pcA+pcO+hh+xs;
+  const bhBase=pos.bhBase||0;
+  const nv_bhxh=bhBase*BH_NV.bhxh,nv_bhyt=bhBase*BH_NV.bhyt,nv_bhtn=bhBase*BH_NV.bhtn;
+  const co_bhxh=bhBase*BH_CO.bhxh,co_bhyt=bhBase*BH_CO.bhyt,co_bhtn=bhBase*BH_CO.bhtn;
+  const totalBH=nv_bhxh+nv_bhyt+nv_bhtn;
+  const taxable=Math.max(0,totalIncome-totalBH-11000000);
+  let tncn=0;
+  if(taxable>80000000)tncn=taxable*.35-9850000;
+  else if(taxable>52000000)tncn=taxable*.3-5850000;
+  else if(taxable>32000000)tncn=taxable*.25-3250000;
+  else if(taxable>18000000)tncn=taxable*.2-1650000;
+  else if(taxable>10000000)tncn=taxable*.15-750000;
+  else if(taxable>5000000)tncn=taxable*.1-250000;
+  else tncn=taxable*.05;
+  tncn=Math.max(0,tncn);
+  const totalDeduct=totalBH+tncn;
+  const netPay=totalIncome-totalDeduct;
+  return{nv,pos,ngayCong,otHours,holDays,okN,kpi,pctHH,luongCB,otPay,holPay,pcA,pcO,hh,xs,totalIncome,nv_bhxh,nv_bhyt,nv_bhtn,co_bhxh,co_bhyt,co_bhtn,tncn,totalDeduct,netPay};
+}
+function renderSalary(){
+  const month=document.getElementById('sal-month').value||thisMonth();
+  const data=NV_LIST.map(nv=>calcSalary(nv,month));
+  const totIncome=data.reduce((s,d)=>s+d.totalIncome,0);
+  const totNet=data.reduce((s,d)=>s+d.netPay,0);
+  const totHH=data.reduce((s,d)=>s+d.hh,0);
+  const totCoBH=data.reduce((s,d)=>s+d.co_bhxh+d.co_bhyt+d.co_bhtn,0);
+  document.getElementById('sal-total-fund').textContent=fmt(totIncome);
+  document.getElementById('sal-total-net').textContent=fmt(totNet);
+  document.getElementById('sal-total-hh').textContent=fmt(totHH);
+  document.getElementById('sal-total-bh').textContent=fmt(totCoBH);
+  const co_bhxh=data.reduce((s,d)=>s+d.co_bhxh,0);
+  const co_bhyt=data.reduce((s,d)=>s+d.co_bhyt,0);
+  const co_bhtn=data.reduce((s,d)=>s+d.co_bhtn,0);
+  document.getElementById('co-bhxh').textContent=fmt(co_bhxh);
+  document.getElementById('co-bhyt').textContent=fmt(co_bhyt);
+  document.getElementById('co-bhtn').textContent=fmt(co_bhtn);
+  const tbody=document.getElementById('sal-tbody');
+  tbody.innerHTML=data.map((d,i)=>`<tr>
+    <td><strong style="color:${NV_COL[i]}">${NV_AVA[i]} ${d.nv}</strong></td>
+    <td style="font-size:12px">${d.pos.ico} ${NV_POS[d.nv]||'NV Kho'}</td>
+    <td>${d.ngayCong}</td>
+    <td style="color:${d.otHours>0?'#34d399':'rgba(255,255,255,.3)'}">${d.otHours.toFixed(1)}h</td>
+    <td style="color:#4ade80">${fmt(d.luongCB)}</td>
+    <td style="color:${d.otPay+d.holPay>0?'#4ade80':'rgba(255,255,255,.3)'}">${fmt(d.otPay+d.holPay)}</td>
+    <td style="color:#4ade80">${fmt(d.pcA+d.pcO)}</td>
+    <td style="color:#4ade80">${fmt(d.hh)}</td>
+    <td style="color:${d.xs>0?'#fb923c':'rgba(255,255,255,.3)'}">${d.xs>0?fmt(d.xs):'–'}</td>
+    <td style="color:#f87171">-${fmt(d.nv_bhxh)}</td>
+    <td style="color:#f87171">-${fmt(d.nv_bhyt)}</td>
+    <td style="color:#f87171">-${fmt(d.nv_bhtn)}</td>
+    <td style="color:${d.tncn>0?'#f87171':'rgba(255,255,255,.3)'}">${d.tncn>0?'-'+fmt(d.tncn):'–'}</td>
+    <td style="color:var(--ps);font-weight:800;font-size:14px">${fmt(d.netPay)}</td>
+  </tr>`).join('');
+}
+function exportSalaryCSV(){
+  const month=document.getElementById('sal-month').value||thisMonth();
+  const data=NV_LIST.map(nv=>calcSalary(nv,month));
+  const hdr='Nhân viên,Vị trí,Ngày công,Giờ OT,Lương CB,OT+Lễ,PC ăn+ở,Hoa hồng,Thưởng XS,BHXH NV,BHYT NV,BHTN NV,Thuế TNCN,THỰC NHẬN';
+  const rows=data.map(d=>[d.nv,NV_POS[d.nv],d.ngayCong,d.otHours.toFixed(1),
+    Math.round(d.luongCB),Math.round(d.otPay+d.holPay),Math.round(d.pcA+d.pcO),
+    Math.round(d.hh),Math.round(d.xs),Math.round(d.nv_bhxh),Math.round(d.nv_bhyt),
+    Math.round(d.nv_bhtn),Math.round(d.tncn),Math.round(d.netPay)].join(','));
+  const csv='\uFEFF'+[hdr,...rows].join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`MILAVY_Luong_${month}.csv`;a.click();URL.revokeObjectURL(url);
+}
+
+// ═══ KPI ═════════════════════════════════════════════════════════════
+function renderKPI(){
+  const month=document.getElementById('kpi-month').value||thisMonth();
+  const data=NV_LIST.map((nv,i)=>{
+    const recs=getRecords().filter(r=>r.nv===nv&&r.date?.startsWith(month));
+    const att =getAtt().filter(r=>r.nv===nv&&r.date?.startsWith(month));
+    const ok=recs.filter(r=>r.status==='OK').length;
+    const x=recs.filter(r=>r.status==='X').length;
+    const pct=recs.length?Math.round(ok/recs.length*100):0;
+    const late=att.filter(r=>r.status?.includes('trễ')).length;
+    const drop=att.reduce((s,r)=>s+(r.status?.includes('>15')?3:r.status?.includes('5-15')?2:r.status?.includes('<5')?1:0),0);
+    const kpi=Math.max(60,100-drop);
+    const pctHH=kpi>=97?100:kpi>=90?100:kpi>=86?90:kpi>=80?80:60;
+    const rank=kpi>=97?'⭐⭐⭐ Xuất sắc':kpi>=90?'⭐⭐ Tốt':kpi>=80?'⭐ Trung bình':'⚠️ Cần cải thiện';
+    const col=kpi>=90?'#4ade80':kpi>=80?'#fb923c':'#f87171';
+    return{nv,i,ok,x,pct,late,kpi,pctHH,rank,col};
+  }).sort((a,b)=>b.kpi-a.kpi);
+  document.getElementById('kpi-cards').innerHTML=data.map((d,rank)=>`
+    <div class="nv-card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div style="width:38px;height:38px;border-radius:50%;background:${NV_COL[d.i]};display:flex;align-items:center;justify-content:center;font-size:18px">${NV_AVA[d.i]}</div>
+        <div><div style="font-size:14px;font-weight:700;color:#fff">${d.nv}</div><div style="font-size:11px;color:rgba(255,255,255,.4)">#${rank+1} tháng này</div></div>
+        <div style="margin-left:auto;text-align:right"><div style="font-size:22px;font-weight:900;color:${d.col}">${d.kpi}</div><div style="font-size:10px;color:rgba(255,255,255,.3)">điểm</div></div>
+      </div>
+      <div style="font-size:13px;font-weight:700;color:${d.col};text-align:center;margin:4px 0">${d.rank}</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px">
+        <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:8px;text-align:center">
+          <div style="font-size:16px;font-weight:800;color:#4ade80">${d.ok}</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.4)">ĐƠN OK</div>
+        </div>
+        <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:8px;text-align:center">
+          <div style="font-size:16px;font-weight:800;color:#f87171">${d.x}</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.4)">ĐƠN X</div>
+        </div>
+        <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:8px;text-align:center">
+          <div style="font-size:16px;font-weight:800;color:#fb923c">${d.pctHH}%</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.4)">% HOA HỒNG</div>
+        </div>
+      </div>
+      <div class="kpi-mini" style="margin-top:8px"><div class="kpi-fill" style="width:${d.kpi}%;background:${d.col}"></div></div>
+    </div>`).join('');
+  document.getElementById('kpi-tbody').innerHTML=data.map(d=>`<tr>
+    <td><strong>${NV_AVA[d.i]} ${d.nv}</strong></td>
+    <td style="color:#4ade80">${d.ok}</td><td style="color:#f87171">${d.x}</td>
+    <td>${d.pct}%</td><td style="color:${d.late>0?'#fb923c':'#4ade80'}">${d.late}</td>
+    <td><span class="bd ${d.kpi>=90?'b-ok':d.kpi>=80?'b-warn':'b-x'}" style="font-size:13px;font-weight:900">${d.kpi}</span></td>
+    <td>${d.pctHH}%</td><td>${d.rank}</td>
+  </tr>`).join('');
+}
+
+// ═══ HÀNG HOÀN ════════════════════════════════════════════════════════
+function renderHoan(){
+  const hoan=getHoan();
+  const totalN=hoan.length,fraudN=hoan.filter(r=>r.isFraud).length;
+  const banN=hoan.filter(r=>r.kq?.includes('bẩn')||r.kq?.includes('mùi')).length;
+  const datN=hoan.filter(r=>r.kq?.includes('Đạt')).length;
+  document.getElementById('hoan-kpis').innerHTML=`
+    <div class="kcard"><div style="font-size:20px">↩️</div><div class="knum">${totalN}</div><div class="klbl">Tổng hàng hoàn</div></div>
+    <div class="kcard" style="border-color:rgba(200,56,90,.3)"><div style="font-size:20px">🚨</div><div class="knum" style="color:#f87171">${fraudN}</div><div class="klbl">Tráo hàng</div></div>
+    <div class="kcard"><div style="font-size:20px">🧹</div><div class="knum" style="color:#fb923c">${banN}</div><div class="klbl">Bẩn/có mùi</div></div>
+    <div class="kcard"><div style="font-size:20px">✅</div><div class="knum" style="color:#4ade80">${datN}</div><div class="klbl">Đạt – tái bán</div></div>`;
+  const fraudRecs=hoan.filter(r=>r.isFraud);
+  document.getElementById('fraud-list').innerHTML=fraudRecs.length?fraudRecs.map(r=>`<div class="alert al-red"><div style="font-size:18px">🚨</div><div><div style="font-size:13px;font-weight:700;color:#fff">Tráo hàng – ${r.ma}</div><div style="font-size:12px;color:rgba(255,255,255,.6)">NV: ${r.nv} | ${r.date} ${r.time} | ${r.kq}</div></div></div>`).join(''):'<div style="color:rgba(255,255,255,.3);font-size:13px;text-align:center;padding:16px">✅ Không có tráo hàng</div>';
+  const tbody=document.getElementById('hoan-tbody');
+  if(!hoan.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,.3);padding:24px">Chưa có hàng hoàn</td></tr>';return;}
+  tbody.innerHTML=[...hoan].reverse().map(r=>`<tr style="background:${r.isFraud?'rgba(146,43,33,.1)':''}">
+    <td>${r.date?.slice(5)||''} ${r.time||''}</td>
+    <td style="font-family:monospace;color:#60a5fa;font-size:12px">${r.ma}</td>
+    <td><span class="bd ${r.loai==='THHT'?'b-warn':'b-info'}">${r.loai}</span></td>
+    <td style="font-size:12px">${r.kq?.slice(0,22)||'–'}</td>
+    <td><span class="bd ${r.isFraud?'b-fraud':r.mucDo?.includes('Khẩn')?'b-x':r.mucDo?.includes('chú')?'b-warn':'b-ok'}">${r.mucDo||'Bình thường'}</span></td>
+    <td>${r.nv}</td>
+    <td style="font-size:12px;color:rgba(255,255,255,.6)">${r.hd?.slice(0,20)||'–'}</td>
+  </tr>`).join('');
+}
+
+// ═══ NHÂN VIÊN ════════════════════════════════════════════════════════
+function renderNV(){
+  const month=thisMonth();
+  document.getElementById('nv-cards').innerHTML=NV_LIST.map((nv,i)=>{
+    const recs=getRecords().filter(r=>r.nv===nv&&r.date?.startsWith(month));
+    const att =getAtt().filter(r=>r.nv===nv&&r.date?.startsWith(month));
+    const ok=recs.filter(r=>r.status==='OK').length;
+    const x=recs.filter(r=>r.status==='X').length;
+    const drop=att.reduce((s,r)=>s+(r.status?.includes('>15')?3:r.status?.includes('5-15')?2:r.status?.includes('<5')?1:0),0);
+    const kpi=Math.max(60,100-drop);
+    const col=kpi>=90?'#4ade80':kpi>=80?'#fb923c':'#f87171';
+    const sal=calcSalary(nv,month);
+    return`<div class="nv-card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div style="width:44px;height:44px;border-radius:50%;background:${NV_COL[i]};display:flex;align-items:center;justify-content:center;font-size:22px">${NV_AVA[i]}</div>
+        <div><div style="font-size:15px;font-weight:700;color:#fff">${nv}</div><div style="font-size:11px;color:rgba(255,255,255,.4)">${NV_POS[nv]||'NV Kho'}</div></div>
+        <div style="margin-left:auto;text-align:right"><div style="font-size:20px;font-weight:900;color:${col}">${kpi}</div><div style="font-size:10px;color:rgba(255,255,255,.3)">KPI</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px">
+        <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:8px;text-align:center"><div style="font-size:16px;font-weight:800;color:#4ade80">${ok}</div><div style="font-size:9px;color:rgba(255,255,255,.4)">OK</div></div>
+        <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:8px;text-align:center"><div style="font-size:16px;font-weight:800;color:#f87171">${x}</div><div style="font-size:9px;color:rgba(255,255,255,.4)">X</div></div>
+        <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:8px;text-align:center"><div style="font-size:16px;font-weight:800;color:#60a5fa">${att.length}</div><div style="font-size:9px;color:rgba(255,255,255,.4)">N.Công</div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px">
+        <span style="color:rgba(255,255,255,.4)">Thực nhận tháng</span>
+        <span style="font-weight:700;color:var(--ps)">${fmt(sal.netPay)}</span>
+      </div>
+      <div class="kpi-mini"><div class="kpi-fill" style="width:${kpi}%;background:${col}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ═══ SETTINGS ════════════════════════════════════════════════════════
+function renderAccTable(){
+  document.getElementById('acc-tbody').innerHTML=ACCOUNTS.map(a=>`<tr>
+    <td>${a.user}</td><td>${a.name}</td>
+    <td><span class="bd b-info">${a.role}</span></td>
+    <td style="font-size:12px;color:rgba(255,255,255,.5)">${a.canAll?'Xem tất cả dữ liệu':'Xem dữ liệu giới hạn'}</td>
+  </tr>`).join('');
+}
+async function testAPI(){
+  const url=document.getElementById('cfg-api').value;
+  if(!url){document.getElementById('api-status').textContent='❌ Chưa có URL';return;}
+  document.getElementById('api-status').textContent='🔄 Đang test...';
+  try{const r=await fetch(url+'?action=health');const d=await r.json();document.getElementById('api-status').textContent=d.ok?'✅ API hoạt động: '+d.msg:'⚠️ '+JSON.stringify(d);}
+  catch(e){document.getElementById('api-status').textContent='❌ Lỗi kết nối: '+e.message;}
+}
+
+// ══ CEO PRODUCTS ══════════════════════════════════════════════════════════════
+function renderCEOProds() {
+  const q  = (document.getElementById('ceo-prod-q')?.value||'').toLowerCase();
+  const f  = document.getElementById('ceo-prod-f')?.value||'all';
+  const all = JSON.parse(localStorage.getItem('mv_prods')||'[]');
+  const prods = all.filter(p => {
+    if (q && !p.sku?.toLowerCase().includes(q) && !p.name?.toLowerCase().includes(q)) return false;
+    if (f === 'low') return p.stock <= p.min;
+    if (f !== 'all') return p.cat === f;
+    return true;
+  });
+  // Summary
+  document.getElementById('cp-total').textContent = all.length;
+  document.getElementById('cp-low').textContent   = all.filter(p=>p.stock>0&&p.stock<=p.min).length;
+  document.getElementById('cp-out').textContent   = all.filter(p=>p.stock<=0).length;
+  document.getElementById('cp-ok').textContent    = all.filter(p=>p.stock>p.min).length;
+  // Alerts
+  const lowItems = all.filter(p=>p.stock<=p.min);
+  const alertEl  = document.getElementById('cp-alerts');
+  if (lowItems.length > 0) {
+    alertEl.innerHTML = `<div class="alert al-or"><div style="font-size:18px">⚠️</div><div><div style="font-size:13px;font-weight:700;color:#fff">${lowItems.length} SKU sắp hết hoặc hết hàng cần nhập thêm</div><div style="font-size:12px;color:rgba(255,255,255,.6)">${lowItems.slice(0,5).map(p=>p.sku).join(' · ')}</div></div></div>`;
+  } else alertEl.innerHTML = '';
+  // Table
+  const fmt = n => new Intl.NumberFormat('vi-VN').format(Math.round(n))+'đ';
+  const tbody = document.getElementById('cp-tbody');
+  if (!prods.length) { tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:rgba(255,255,255,.3);padding:24px">Không có sản phẩm</td></tr>'; return; }
+  tbody.innerHTML = prods.map(p => {
+    const col = p.stock<=0?'#f87171':p.stock<=p.min?'#fb923c':'#4ade80';
+    const st  = p.stock<=0?'❌ Hết hàng':p.stock<=p.min?'⚠️ Sắp hết':'✅ Đủ hàng';
+    return `<tr>
+      <td style="font-family:monospace;color:#60a5fa;font-size:12px">${p.sku}</td>
+      <td><strong>${p.name}</strong></td>
+      <td><span class="bd b-info">${p.cat}</span></td>
+      <td>${p.color||'–'}</td><td>${p.size||'–'}</td>
+      <td style="font-family:monospace;font-size:11px;color:#60a5fa">${p.loc||'–'}</td>
+      <td style="font-weight:800;color:${col};font-size:15px">${p.stock}</td>
+      <td style="color:rgba(255,255,255,.5)">${p.min}</td>
+      <td><span class="bd ${p.stock<=0?'b-x':p.stock<=p.min?'b-warn':'b-ok'}">${st}</span></td>
+      <td>
+        <div style="display:flex;gap:5px;align-items:center">
+          <input type="number" value="${p.stock}" min="0" style="width:55px;padding:4px 6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:6px;color:#fff;font-size:12px;text-align:center;font-family:inherit" id="cstk-${p.sku.replace(/-/g,'_')}">
+          <button onclick="updCEOStk('${p.sku}')" class="btn btn-g btn-sm" style="padding:4px 8px;font-size:11px">💾</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+function updCEOStk(sku) {
+  const prods = JSON.parse(localStorage.getItem('mv_prods')||'[]');
+  const idx = prods.findIndex(p=>p.sku===sku); if(idx<0) return;
+  const inputId = 'cstk-'+sku.replace(/-/g,'_');
+  prods[idx].stock = +document.getElementById(inputId)?.value||0;
+  localStorage.setItem('mv_prods', JSON.stringify(prods));
+  renderCEOProds();
+}
+
+// ══ BIỂU MẪU ══════════════════════════════════════════════════════════════════
+function showBM(type) {
+  ['bg','kk','s5','tl','kn'].forEach(t => {
+    const el = document.getElementById('bm-'+t+'-content');
+    if(el) el.style.display = t===type ? 'block' : 'none';
+  });
+  if(type==='bg') renderBMBG();
+  if(type==='kk') renderBMKK();
+  if(type==='s5') renderBMS5();
+  if(type==='tl') renderBMTL();
+  if(type==='kn') renderBMKN();
+}
+function renderBMBG() {
+  const bgs = JSON.parse(localStorage.getItem('mv_bg')||'[]').reverse();
+  const tbody = document.getElementById('bm-bg-tbody');
+  if(!tbody) return;
+  if(!bgs.length){tbody.innerHTML='<tr><td colspan="11" style="text-align:center;color:rgba(255,255,255,.3);padding:24px">Chưa có bàn giao ca nào</td></tr>';return;}
+  tbody.innerHTML = bgs.map(b => {
+    const ckDone = b.checks?.filter(c=>c.ok).length||0;
+    const ckTotal= b.checks?.length||0;
+    return `<tr>
+      <td>${b.date||'–'}</td><td>${b.time||'–'}</td>
+      <td><strong>${b.nv}</strong></td><td><strong>${b.nextNv}</strong></td>
+      <td><span class="bd b-info">Ca ${b.ca}</span></td>
+      <td>${b.tot||0}</td>
+      <td style="color:#4ade80;font-weight:700">${b.ok||0}</td>
+      <td style="color:${(b.xdon||0)>0?'#f87171':'rgba(255,255,255,.4)'}">${b.xdon||0}</td>
+      <td>${(b.thht||0)+(b.bom||0)}</td>
+      <td><span class="bd ${(b.fraud||0)>0?'b-fraud':'b-ok'}">${(b.fraud||0)>0?'🚨 '+b.fraud:'✅ 0'}</span></td>
+      <td style="font-size:12px">${ckDone}/${ckTotal} ✅</td>
+    </tr>`;
+  }).join('');
+}
+function renderBMKK() {
+  const kks = JSON.parse(localStorage.getItem('mv_kk')||'[]').reverse();
+  const tbody = document.getElementById('bm-kk-tbody');
+  if(!tbody) return;
+  if(!kks.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,.3);padding:24px">Chưa có kết quả kiểm kho</td></tr>';return;}
+  tbody.innerHTML = kks.map((k,i) => `<tr style="cursor:pointer" onclick="showKKDetail(${i})">
+    <td>${k.date||'–'}</td><td>${k.nv||'–'}</td>
+    <td>${k.type||'–'}</td><td>${k.area||'–'}</td>
+    <td>${k.total||0}</td>
+    <td><span class="bd ${(k.nDiff||0)>0?'b-warn':'b-ok'}">${k.nDiff||0} chênh lệch</span></td>
+    <td><span class="bd ${(k.nDiff||0)>0?'b-warn':'b-ok'}">${(k.nDiff||0)===0?'✅ Đạt':'⚠️ Cần kiểm tra'}</span></td>
+  </tr>`).join('');
+}
+function showKKDetail(idx) {
+  const kks = JSON.parse(localStorage.getItem('mv_kk')||'[]').reverse();
+  const k = kks[idx]; if(!k) return;
+  const detail = document.getElementById('bm-kk-detail-sec');
+  const tbody = document.getElementById('bm-kk-detail');
+  if(!detail||!tbody) return;
+  detail.style.display = 'block';
+  const diffs = (k.items||[]).filter(r=>r.diff!==0);
+  if(!diffs.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,.3)">Không có chênh lệch ✅</td></tr>';return;}
+  tbody.innerHTML = diffs.map(r=>{
+    const col=r.diff<0?'#f87171':'#fb923c';
+    return `<tr><td style="font-family:monospace;font-size:11px">${r.loc||'?'}</td><td style="font-family:monospace;color:#60a5fa">${r.sku}</td>
+      <td>${r.sys}</td><td>${r.real}</td>
+      <td style="font-weight:700;color:${col}">${r.diff>=0?'+':''}${r.diff} ${r.diff<0?'❌ Thiếu':'⚠️ Thừa'}</td></tr>`;
+  }).join('');
+}
+function renderBMS5() {
+  const s5s = JSON.parse(localStorage.getItem('mv_s5')||'[]').reverse();
+  const cards = document.getElementById('bm-s5-cards');
+  const tbody = document.getElementById('bm-s5-tbody');
+  if(!s5s.length){
+    if(cards) cards.innerHTML='<div style="color:rgba(255,255,255,.3);font-size:13px;text-align:center;grid-column:1/-1;padding:20px">Chưa có kết quả 5S</div>';
+    if(tbody) tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,.3);padding:24px">Chưa có dữ liệu</td></tr>';
+    return;
+  }
+  if(cards) cards.innerHTML = s5s.slice(0,4).map(s=>{
+    const col=s.total>=85?'#4ade80':s.total>=70?'#fb923c':'#f87171';
+    return `<div class="kcard"><div style="font-size:20px">🌟</div><div class="knum" style="color:${col};font-size:22px">${s.total}</div><div class="klbl">${s.nv} – ${s.date?.slice(5)||''}</div><div class="ktrend" style="color:${col}">${s.result||'–'}</div></div>`;
+  }).join('');
+  if(tbody) tbody.innerHTML = s5s.map(s=>`<tr>
+    <td>${s.date||'–'}</td><td>${s.nv||'–'}</td>
+    <td style="font-weight:800;color:${s.total>=85?'#4ade80':s.total>=70?'#fb923c':'#f87171'};font-size:16px">${s.total}/100</td>
+    <td><span class="bd ${s.total>=85?'b-ok':s.total>=70?'b-warn':'b-x'}">${s.result||'–'}</span></td>
+    <td style="font-size:12px;color:rgba(255,255,255,.6)">${s.note||'–'}</td>
+  </tr>`).join('');
+}
+function renderBMTL() {
+  const tls = JSON.parse(localStorage.getItem('mv_tl')||'[]').reverse();
+  const tbody = document.getElementById('bm-tl-tbody');
+  if(!tbody) return;
+  const fmt = n=>new Intl.NumberFormat('vi-VN').format(Math.round(n))+'đ';
+  if(!tls.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:rgba(255,255,255,.3);padding:24px">Chưa có biên bản thất lạc</td></tr>';return;}
+  tbody.innerHTML = tls.map(t=>`<tr>
+    <td>${t.date||'–'}</td><td style="font-family:monospace;color:#60a5fa">${t.maLog||'–'}</td>
+    <td style="font-family:monospace">${t.sku||'–'}</td><td>${t.qty||0}</td>
+    <td>${fmt(t.value||0)}</td><td style="font-size:12px">${t.cause||'–'}</td>
+    <td><span class="bd b-warn">${t.action||'–'}</span></td>
+  </tr>`).join('');
+}
+function renderBMKN() {
+  const kns = JSON.parse(localStorage.getItem('mv_kn')||'[]').reverse();
+  const tbody = document.getElementById('bm-kn-tbody');
+  if(!tbody) return;
+  if(!kns.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:rgba(255,255,255,.3);padding:24px">Chưa có khiếu nại nào</td></tr>';return;}
+  tbody.innerHTML = kns.map(k=>`<tr>
+    <td>${k.date||'–'}</td><td style="font-family:monospace;color:#60a5fa">${k.maLog||'–'}</td>
+    <td><span class="bd b-info">${k.channel||'–'}</span></td>
+    <td style="font-family:monospace;font-size:11px">${k.order||'–'}</td>
+    <td>${k.type||'–'}</td><td style="font-size:12px">${k.req||'–'}</td>
+    <td style="font-size:12px">${k.resolve?.slice(0,30)||'–'}</td>
+    <td><span class="bd ${k.status==='done'?'b-ok':'b-pend'}">${k.status==='done'?'✅ Xong':'⏳ Xử lý'}</span></td>
+  </tr>`).join('');
+}
+function openTL() { openMoBG('tl-mo'); }
+function openKN() { openMoBG('kn-mo'); }
+function openMoBG(id){ const el=document.getElementById(id);if(el){el.classList.add('show');} }
+function closeMoBG(id){ const el=document.getElementById(id);if(el){el.classList.remove('show');} }
+function submitTL() {
+  const sku=document.getElementById('tl-sku').value.trim();
+  if(!sku){alert('Nhập SKU thất lạc!');return;}
+  const now=new Date(); const tls=JSON.parse(localStorage.getItem('mv_tl')||'[]');
+  tls.push({id:Date.now(),date:today(),time:now.toTimeString().slice(0,5),
+    sku,qty:+document.getElementById('tl-qty').value||1,
+    value:+document.getElementById('tl-value').value||0,
+    loc:document.getElementById('tl-loc').value,
+    cause:document.getElementById('tl-cause').value,
+    desc:document.getElementById('tl-desc').value,
+    action:document.getElementById('tl-action').value,
+    maLog:'TL-'+now.toISOString().slice(0,10).replace(/-/g,'')+'-'+String(tls.length+1).padStart(3,'0'),
+    by:curUser?.name||'CEO'});
+  localStorage.setItem('mv_tl',JSON.stringify(tls));
+  closeMoBG('tl-mo');renderBMTL();
+  ['tl-sku','tl-qty','tl-value','tl-loc','tl-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=id==='tl-qty'?'1':'';});
+}
+function submitKN() {
+  const order=document.getElementById('kn-order').value.trim();
+  if(!order){alert('Nhập mã đơn hàng!');return;}
+  const now=new Date(); const kns=JSON.parse(localStorage.getItem('mv_kn')||'[]');
+  kns.push({id:Date.now(),date:today(),time:now.toTimeString().slice(0,5),
+    order,channel:document.getElementById('kn-channel').value,
+    type:document.getElementById('kn-type').value,
+    req:document.getElementById('kn-req').value,
+    desc:document.getElementById('kn-desc').value,
+    verify:document.getElementById('kn-verify').value,
+    resolve:document.getElementById('kn-resolve').value,
+    maLog:'KN-'+now.toISOString().slice(0,10).replace(/-/g,'')+'-'+String(kns.length+1).padStart(3,'0'),
+    status:'pending',by:curUser?.name||'CEO'});
+  localStorage.setItem('mv_kn',JSON.stringify(kns));
+  closeMoBG('kn-mo');renderBMKN();
+  ['kn-order','kn-desc','kn-resolve'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+}
+
+// ══ BÁO CÁO BC-01/02/03 ══════════════════════════════════════════════════════
+let _bcPeriod = 'day';
+function setBCPeriod(p, btn) {
+  _bcPeriod = p;
+  document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const titles = {day:'📋 Báo cáo ngày hôm nay (BC-01)',week:'📋 Báo cáo 7 ngày gần nhất (BC-02)',month:'📋 Báo cáo tháng này (BC-03)'};
+  const tEl = document.getElementById('bc-title'); if(tEl) tEl.textContent=titles[p];
+  renderBC();
+}
+function renderBC() {
+  const recs = getRecords();
+  const att  = getAtt();
+  const hoan = JSON.parse(localStorage.getItem('mv_hoan')||'[]');
+  const defs = JSON.parse(localStorage.getItem('mv_defects')||'[]');
+  const bgs  = JSON.parse(localStorage.getItem('mv_bg')||'[]');
+  const t = today(), m = thisMonth();
+  const filtered = recs.filter(r => {
+    if(_bcPeriod==='day')  return r.date===t;
+    if(_bcPeriod==='week') return r.date>=(new Date(Date.now()-7*86400000)).toISOString().slice(0,10);
+    return r.date?.startsWith(m);
+  });
+  const ok = filtered.filter(r=>r.status==='OK').length;
+  const x  = filtered.filter(r=>r.status==='X').length;
+  const hn = hoan.filter(r=>_bcPeriod==='day'?r.date===t:_bcPeriod==='month'?r.date?.startsWith(m):true).length;
+  const rate = filtered.length?Math.round(ok/filtered.length*100):0;
+  document.getElementById('bc-ok').textContent   = ok;
+  document.getElementById('bc-x').textContent    = x;
+  document.getElementById('bc-hoan').textContent = hn;
+  document.getElementById('bc-rate').textContent = rate+'%';
+  // Per NV
+  const attFiltered = att.filter(r=>_bcPeriod==='day'?r.date===t:_bcPeriod==='month'?r.date?.startsWith(m):true);
+  const tbody = document.getElementById('bc-tbody');
+  const defsFiltered = defs.filter(r=>_bcPeriod==='day'?r.date===t:_bcPeriod==='month'?r.date?.startsWith(m):true);
+  const hnFiltered   = hoan.filter(r=>_bcPeriod==='day'?r.date===t:_bcPeriod==='month'?r.date?.startsWith(m):true);
+  if(tbody) tbody.innerHTML = NV_LIST.map((nv,i)=>{
+    const nvRecs=filtered.filter(r=>r.nv===nv);
+    const nvAtt=attFiltered.filter(r=>r.nv===nv);
+    const nvDef=defsFiltered.filter(r=>r.nv===nv).length;
+    const nvHn=hnFiltered.filter(r=>r.nv===nv).length;
+    const nvOK=nvRecs.filter(r=>r.status==='OK').length;
+    const nvX=nvRecs.filter(r=>r.status==='X').length;
+    const nvR=nvRecs.length?Math.round(nvOK/nvRecs.length*100):0;
+    const lastAtt=nvAtt[nvAtt.length-1];
+    return `<tr>
+      <td><strong style="color:${NV_COL[i]}">${NV_AVA[i]} ${nv}</strong></td>
+      <td style="color:#4ade80">${lastAtt?.timeIn||'–'}</td>
+      <td style="color:#f87171">${lastAtt?.timeOut||'⏳'}</td>
+      <td><span class="bd ${lastAtt?.status==='Đúng giờ'?'b-ok':lastAtt?'b-warn':'b-x'}">${lastAtt?.status||'Chưa vào'}</span></td>
+      <td style="color:#4ade80;font-weight:700">${nvOK}</td>
+      <td style="color:${nvX>0?'#f87171':'rgba(255,255,255,.4)'}">${nvX}</td>
+      <td style="color:${nvR>=95?'#4ade80':'#fb923c'};font-weight:700">${nvR}%</td>
+      <td>${nvHn}</td>
+      <td>${nvDef}</td>
+    </tr>`;
+  }).join('');
+  // BG notes
+  const bgFiltered=bgs.filter(r=>_bcPeriod==='day'?r.date===t:_bcPeriod==='month'?r.date?.startsWith(m):true);
+  const bgTbody=document.getElementById('bc-bg-tbody');
+  if(bgTbody) bgTbody.innerHTML=!bgFiltered.length?'<tr><td colspan="5" style="text-align:center;color:rgba(255,255,255,.3);padding:16px">Không có bàn giao trong kỳ</td></tr>':
+    bgFiltered.reverse().map(b=>`<tr><td>Ca ${b.ca}</td><td>${b.nv}</td><td>${b.nextNv}</td>
+      <td style="font-size:12px;color:rgba(255,255,255,.6)">${b.inc||'Không có'}</td>
+      <td style="font-size:12px;color:rgba(255,255,255,.6)">${b.note||'–'}</td></tr>`).join('');
+}
+function exportBC() {
+  const recs=getRecords(),att=getAtt();const t=today(),m=thisMonth();
+  const filtered=recs.filter(r=>_bcPeriod==='day'?r.date===t:_bcPeriod==='month'?r.date?.startsWith(m):true);
+  const hdr='Ngày,NV,Ca,Mã đơn,Trạng thái,Lý do,Giờ quét';
+  const rows=filtered.map(r=>[r.date,r.nv,r.ca,r.orderId,r.status,r.reason||'',r.time].join(','));
+  const csv='﻿'+[hdr,...rows].join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');
+  a.href=url;a.download=`MILAVY_BaoCao_${t}.csv`;a.click();URL.revokeObjectURL(url);
+}
+
+// ══ EXTEND goPage ═════════════════════════════════════════════════════════════
+// goPage extensions handled inline
+// Also call on init
+// renderCEOProds called when products page is opened
+
+
+// ══ CEO 5S CHẤM ĐIỂM ══════════════════════════════════════════════════════════
+const CEO_S5_CFG = [
+  {s:'S1 – Sàng lọc',ico:'🗑️',color:'#1A5276',items:[
+    'Hàng lỗi/hoàn tách biệt, dán tem màu đúng quy định',
+    'Không có vật dụng thừa / rác tại khu packing',
+  ]},
+  {s:'S2 – Sắp xếp',ico:'📦',color:'#6C3483',items:[
+    'Nhãn vị trí kho rõ ràng, màu tem đúng tầng kệ',
+    'Hàng xếp đúng quy tắc size/màu/FIFO, nhãn hướng ra ngoài',
+  ]},
+  {s:'S3 – Sạch sẽ',ico:'🧹',color:'#0E6655',items:[
+    'Khu packing sạch, mặt bàn không có rác/hàng rơi',
+    'Lối đi thông thoáng, không để hàng chắn lối',
+  ]},
+  {s:'S4 – Săn sóc',ico:'✅',color:'#1A6632',items:[
+    'Camera đóng gói hoạt động tốt, đèn xanh sáng liên tục',
+    'Checklist S1-S3 được điền đầy đủ mỗi ca trong tuần',
+  ]},
+  {s:'S5 – Sẵn sàng',ico:'🚀',color:'#BA4A00',items:[
+    'Vật tư đóng gói đủ dùng ít nhất 2 ngày (thùng/túi/băng keo/mực)',
+    'NV nắm rõ SOP – trả lời đúng khi quản lý hỏi ngẫu nhiên',
+  ]},
+];
+
+function initCEOS5Form() {
+  const el = document.getElementById('ceo-s5-rows'); if (!el) return;
+  // Set default date to today
+  const dateEl = document.getElementById('s5-date');
+  if (dateEl && !dateEl.value) dateEl.value = today();
+  let html = '';
+  CEO_S5_CFG.forEach((s, si) => {
+    html += `<div style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:8px 10px;background:rgba(255,255,255,.05);border-radius:8px;border-left:3px solid ${s.color}">
+        <span style="font-size:18px">${s.ico}</span>
+        <span style="font-size:13px;font-weight:700;color:#fff">${s.s}</span>
+        <span style="margin-left:auto;font-size:11px;color:rgba(255,255,255,.4)">Tối đa 20 điểm</span>
+      </div>`;
+    s.items.forEach((item, ii) => {
+      html += `<div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:rgba(255,255,255,.03);border-radius:8px;margin-bottom:6px">
+        <div style="flex:1;font-size:12px;color:rgba(255,255,255,.8)">${item}</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <input type="number" min="0" max="10" value="10" id="cs5-${si}-${ii}" oninput="calcCEOS5()"
+            style="width:52px;padding:6px;background:#1e2535;border:1px solid rgba(255,255,255,.2);border-radius:7px;color:#fff;text-align:center;font-size:14px;font-weight:700;font-family:inherit;outline:none">
+          <span style="font-size:11px;color:rgba(255,255,255,.4)">/10</span>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  el.innerHTML = html;
+  calcCEOS5();
+}
+
+function calcCEOS5() {
+  let total = 0;
+  CEO_S5_CFG.forEach((s, si) => {
+    s.items.forEach((_, ii) => {
+      const el = document.getElementById(`cs5-${si}-${ii}`);
+      if (el) total += Math.min(10, Math.max(0, +el.value || 0));
+    });
+  });
+  const tEl = document.getElementById('ceo-s5-total') || document.getElementById('bm-s5-total');
+  const rEl = document.getElementById('ceo-s5-result') || document.getElementById('bm-s5-result');
+  if (tEl) tEl.textContent = total + ' / 100';
+  if (rEl) {
+    if (total >= 85) { rEl.textContent = '✅ ĐẠT – Kho hoạt động tốt!'; rEl.style.background = '#1A6632'; rEl.style.color = '#fff'; }
+    else if (total >= 70) { rEl.textContent = '⚠️ CẦN CẢI THIỆN – Lên kế hoạch cải thiện'; rEl.style.background = '#BA4A00'; rEl.style.color = '#fff'; }
+    else { rEl.textContent = '❌ YẾU – Họp nhóm ngay hôm nay!'; rEl.style.background = '#922B21'; rEl.style.color = '#fff'; }
+  }
+}
+
+function submitCEOS5() {
+  const nv = document.getElementById('s5-nv')?.value;
+  const date = document.getElementById('s5-date')?.value || today();
+  if (!nv) { alert('Chọn nhân viên / ca cần chấm điểm!'); return; }
+  let total = 0; const scores = {};
+  CEO_S5_CFG.forEach((s, si) => {
+    s.items.forEach((_, ii) => {
+      const el = document.getElementById(`cs5-${si}-${ii}`);
+      const v = Math.min(10, Math.max(0, +el?.value || 0));
+      scores[`${si}-${ii}`] = v; total += v;
+    });
+  });
+  const s5s = JSON.parse(localStorage.getItem('mv_s5') || '[]');
+  s5s.push({
+    id: Date.now(), nv, date, total, scores,
+    note: document.getElementById('ceo-s5-note')?.value || '',
+    result: total >= 85 ? 'Đạt' : total >= 70 ? 'Cần cải thiện' : 'Yếu',
+    by: curUser?.name || 'Quản lý',
+    byRole: curUser?.role || 'Manager',
+  });
+  localStorage.setItem('mv_s5', JSON.stringify(s5s));
+  // Reset scores to 10
+  CEO_S5_CFG.forEach((s, si) => { s.items.forEach((_, ii) => { const el = document.getElementById(`cs5-${si}-${ii}`); if(el) el.value='10'; }); });
+  document.getElementById('ceo-s5-note').value = '';
+  document.getElementById('s5-nv').value = '';
+  calcCEOS5(); renderCEOS5Hist();
+  const msg = total >= 85 ? 'ĐẠT ✅' : total >= 70 ? 'Cần cải thiện ⚠️' : 'Yếu ❌';
+  alert(`✅ Đã lưu kết quả 5S\n${nv} – ${date}: ${total}/100 điểm – ${msg}`);
+}
+
+function renderCEOS5Hist() {
+  const s5s = JSON.parse(localStorage.getItem('mv_s5') || '[]').reverse();
+  // Cards
+  const cards = document.getElementById('ceo-s5-cards');
+  if (cards) {
+    if (!s5s.length) { cards.innerHTML = '<div style="color:rgba(255,255,255,.3);grid-column:1/-1;text-align:center;padding:20px">Chưa có kết quả 5S nào</div>'; }
+    else {
+      cards.innerHTML = s5s.slice(0, 4).map(s => {
+        const col = s.total >= 85 ? '#4ade80' : s.total >= 70 ? '#fb923c' : '#f87171';
+        return `<div class="kcard"><div style="font-size:20px">🌟</div>
+          <div style="font-size:24px;font-weight:900;color:${col};margin:6px 0">${s.total}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.5)">${s.nv}</div>
+          <div style="font-size:10px;color:rgba(255,255,255,.4)">${s.date}</div>
+          <div style="font-size:11px;font-weight:700;color:${col};margin-top:4px">${s.result}</div>
+        </div>`;
+      }).join('');
+    }
+  }
+  // Table
+  const tbody = document.getElementById('ceo-s5-tbody');
+  if (!tbody) return;
+  if (!s5s.length) { tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:rgba(255,255,255,.3);padding:24px">Chưa có dữ liệu 5S</td></tr>'; return; }
+  tbody.innerHTML = s5s.map(s => {
+    const col = s.total >= 85 ? '#4ade80' : s.total >= 70 ? '#fb923c' : '#f87171';
+    const sc = (si, ii) => s.scores?.[`${si}-${ii}`] !== undefined ? s.scores[`${si}-${ii}`]*2 : '–';
+    return `<tr>
+      <td>${s.date || '–'}</td>
+      <td><strong>${s.nv}</strong></td>
+      <td style="font-size:18px;font-weight:900;color:${col}">${s.total}/100</td>
+      <td><span class="bd ${s.total>=85?'b-ok':s.total>=70?'b-warn':'b-x'}">${s.result || '–'}</span></td>
+      <td style="color:${col}">${sc(0,0)+sc(0,1)}/20</td>
+      <td style="color:${col}">${sc(1,0)+sc(1,1)}/20</td>
+      <td style="color:${col}">${sc(2,0)+sc(2,1)}/20</td>
+      <td style="color:${col}">${sc(3,0)+sc(3,1)}/20</td>
+      <td style="color:${col}">${sc(4,0)+sc(4,1)}/20</td>
+      <td style="font-size:11px;color:rgba(255,255,255,.5)">${s.note?.slice(0,30) || '–'}</td>
+      <td style="font-size:11px;color:rgba(255,255,255,.4)">${s.by || 'Quản lý'}</td>
+    </tr>`;
+  }).join('');
+}
+
+
+// ══ CEO 5S CHẤM ĐIỂM ══════════════════════════════════════════════════════
+// removed dup
+let _ceoS5Inited = false;
+
+function toggleS5Form() {
+  const area = document.getElementById('s5-form-area');
+  const btn  = document.getElementById('s5-toggle-btn');
+  if (area.style.display === 'none') {
+    area.style.display = 'block';
+    btn.textContent = '▲ Thu gọn';
+    initCEOS5Form();
+  } else {
+    area.style.display = 'none';
+    btn.textContent = '+ Chấm điểm mới';
+  }
+}
+
+function initCEOS5Form() {
+  if (_ceoS5Inited) return;
+  _ceoS5Inited = true;
+  const el = document.getElementById('ceo-s5-rows') || document.getElementById('bm-s5-rows'); if(!el) return;
+  let h = '';
+  CEO_S5_CFG.forEach((s,si) => {
+    s.items.forEach((item,ii) => {
+      h += `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)">
+        <div style="width:34px;height:34px;border-radius:8px;background:rgba(96,165,250,.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${s.ico}</div>
+        <div style="flex:1"><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.4)">${s.s}</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.8)">${item}</div></div>
+        <input type="number" min="0" max="10" value="10" id="cs5-${si}-${ii}"
+          oninput="calcCEOS5()"
+          style="width:55px;padding:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;text-align:center;font-size:15px;font-weight:700;font-family:inherit;outline:none">
+        <span style="font-size:10px;color:rgba(255,255,255,.3)">/10</span>
+      </div>`;
+    });
+  });
+  el.innerHTML = h;
+  calcCEOS5();
+  // Set default chấm bởi CEO
+  const byEl = document.getElementById('ceo-s5-by');
+  if(byEl && curUser) byEl.value = curUser.name;
+}
+
+function calcCEOS5() {
+  let total = 0;
+  CEO_S5_CFG.forEach((s,si) => {
+    s.items.forEach((_,ii) => {
+      const el = document.getElementById(`cs5-${si}-${ii}`);
+      if(el) total += Math.min(10, Math.max(0, +el.value||0));
+    });
+  });
+  const tEl = document.getElementById('ceo-s5-total');
+  const rEl = document.getElementById('ceo-s5-result');
+  if(tEl) tEl.textContent = total + ' / 100';
+  if(rEl) {
+    if(total>=85) { rEl.textContent='✅ ĐẠT – Kho hoạt động tốt!'; rEl.style.background='rgba(26,102,50,.3)'; rEl.style.color='#4ade80'; }
+    else if(total>=70) { rEl.textContent='⚠️ CẦN CẢI THIỆN'; rEl.style.background='rgba(186,74,0,.25)'; rEl.style.color='#fb923c'; }
+    else { rEl.textContent='❌ YẾU – Họp nhóm ngay!'; rEl.style.background='rgba(146,43,33,.3)'; rEl.style.color='#f87171'; }
+  }
+}
+
+// submitCEOS5 duplicate removed
+
+// ════════════════════════════════════════════════════════════════
+// MILAVY SYNC ENGINE – Google Apps Script Bridge
+// Tự động đồng bộ localStorage ↔ Google Sheet
+// ════════════════════════════════════════════════════════════════
+
+const SYNC_CONFIG = {
+  apiUrl:   localStorage.getItem('mv_api_url') || '',
+  apiKey:   localStorage.getItem('mv_api_key') || 'MILAVY2026SECRET',
+  interval: 30000,  // sync mỗi 30 giây
+  keys: [
+    'mv_records','mv_att','mv_leaves','mv_hoan','mv_defects',
+    'mv_bg','mv_kk','mv_prods','mv_s5','mv_schedules','mv_ot','mv_tl','mv_kn'
+  ]
+};
+
+let _syncTimer    = null;
+let _syncStatus   = 'offline';
+let _lastSyncTime = null;
+let _isSyncing    = false;
+
+// ── PUBLIC API ────────────────────────────────────────────────
+async function syncNow(silent = false) {
+  if (!SYNC_CONFIG.apiUrl) return;
+  if (_isSyncing) return;
+  _isSyncing = true;
+  if (!silent) showSyncStatus('syncing');
+
+  try {
+    // 1. Gom tất cả data local
+    const localData = {};
+    SYNC_CONFIG.keys.forEach(k => {
+      const v = localStorage.getItem(k);
+      if (v) localData[k] = v;
+    });
+
+    // 2. Gửi lên server & nhận merged data về
+    const res = await apiCall('setAll', { data: JSON.stringify(localData) });
+    if (!res.ok) throw new Error(res.error || 'Sync failed');
+
+    // 3. Pull toàn bộ data mới nhất từ server
+    const getRes = await apiCall('getAll');
+    if (!getRes.ok) throw new Error(getRes.error);
+
+    // 4. Cập nhật localStorage với data mới nhất
+    let updated = 0;
+    Object.entries(getRes.data || {}).forEach(([key, obj]) => {
+      const serverVal = typeof obj.value === 'string' ? obj.value : JSON.stringify(obj.value);
+      const localVal  = localStorage.getItem(key);
+      if (serverVal && serverVal !== localVal) {
+        localStorage.setItem(key, serverVal);
+        updated++;
+      }
+    });
+
+    _lastSyncTime = new Date();
+    _syncStatus   = 'online';
+    if (!silent) showSyncStatus('ok', updated);
+
+    // Refresh UI nếu có data mới
+    if (updated > 0 && typeof refreshUI === 'function') refreshUI();
+
+  } catch (err) {
+    _syncStatus = 'error';
+    if (!silent) showSyncStatus('err', 0, err.message);
+    console.warn('Sync error:', err);
+  } finally {
+    _isSyncing = false;
+  }
+}
+
+// ── API CALL ─────────────────────────────────────────────────
+async function apiCall(action, extra = {}) {
+  const url  = SYNC_CONFIG.apiUrl;
+  if (!url) return { ok: false, error: 'No API URL' };
+  const body = JSON.stringify({ action, apiKey: SYNC_CONFIG.apiKey, ...extra });
+  const res  = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body
+  });
+  return await res.json();
+}
+
+// ── AUTO SYNC ────────────────────────────────────────────────
+function startAutoSync() {
+  if (!SYNC_CONFIG.apiUrl) return;
+  syncNow(true);  // sync ngay lần đầu
+  _syncTimer = setInterval(() => syncNow(true), SYNC_CONFIG.interval);
+  console.log('Auto sync started:', SYNC_CONFIG.interval/1000, 's interval');
+}
+function stopAutoSync() {
+  if (_syncTimer) { clearInterval(_syncTimer); _syncTimer = null; }
+}
+
+// ── SYNC STATUS INDICATOR ────────────────────────────────────
+function showSyncStatus(status, count = 0, err = '') {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  const map = {
+    syncing: { txt: '🔄 Đang đồng bộ...', bg: '#1A5276', color: '#60a5fa' },
+    ok:      { txt: count > 0 ? `✅ Đã sync (${count} thay đổi)` : '✅ Đã đồng bộ', bg: '#1A6632', color: '#4ade80' },
+    err:     { txt: '⚠️ Lỗi sync – Đang dùng offline', bg: '#BA4A00', color: '#fb923c' },
+    offline: { txt: '📴 Chế độ offline', bg: '#374151', color: '#9ca3af' },
+  };
+  const s = map[status] || map.offline;
+  el.textContent = s.txt;
+  el.style.background = s.bg;
+  el.style.color = s.color;
+  el.style.display = 'block';
+  if (status === 'ok') setTimeout(() => { if(el) el.style.display='none'; }, 3000);
+}
+
+// ── SAVE TO SERVER (ghi ngay khi có thay đổi quan trọng) ─────
+async function saveToServer(key, value) {
+  if (!SYNC_CONFIG.apiUrl) return;
+  try {
+    await apiCall('set', { key, value: typeof value === 'string' ? value : JSON.stringify(value) });
+  } catch(e) { /* silent fail - will sync later */ }
+}
+
+// ── API URL CONFIG ───────────────────────────────────────────
+function setApiUrl(url) {
+  SYNC_CONFIG.apiUrl = url;
+  localStorage.setItem('mv_api_url', url);
+  stopAutoSync();
+  if (url) startAutoSync();
+}
+
+// ── HEALTH CHECK ─────────────────────────────────────────────
+async function testApiConnection(url) {
+  try {
+    const res = await fetch(url + '?action=health&apiKey=' + SYNC_CONFIG.apiKey);
+    const data = await res.json();
+    return data.ok ? { ok: true, msg: data.msg } : { ok: false, msg: data.error };
+  } catch(e) {
+    return { ok: false, msg: e.message };
+  }
+}
+
+// ── CEO SYNC HOOKS ────────────────────────────────────────────
+function refreshUI() {
+  const active = document.querySelector('.screen.active');
+  if(!active) return;
+  const name = active.id.replace('pg-','');
+  const map = {
+    overview: renderOverview, pipeline: renderPipeline,
+    leaves: renderLeaves, salary: renderSalary,
+    kpi: renderKPI, hoan: renderHoan,
+    nhanvien: renderNV, products: renderCEOProds,
+    bieumau: ()=>showBM('bg'), baocao: renderBC
+  };
+  if(map[name]) map[name]();
+}
+
+async function testAndSaveApi() {
+  const url = document.getElementById('cfg-api')?.value?.trim();
+  const statusEl = document.getElementById('api-status');
+  if(!url) { if(statusEl) statusEl.textContent = '❌ Nhập URL trước!'; return; }
+  if(statusEl) statusEl.textContent = '🔄 Đang kiểm tra...';
+  const test = await testApiConnection(url);
+  if(test.ok) {
+    setApiUrl(url);
+    if(statusEl) statusEl.innerHTML = '✅ Kết nối thành công! <strong>' + test.msg + '</strong><br>Đang đồng bộ dữ liệu...';
+    await syncNow();
+    setTimeout(refreshUI, 1000);
+  } else {
+    if(statusEl) statusEl.textContent = '❌ Lỗi: ' + test.msg;
+  }
+}
+
+// Load saved URL on init
+const _ceoOrigShow = window.showApp || function(){};
+window.showApp = function() {
+  _ceoOrigShow();
+  const savedUrl = localStorage.getItem('mv_api_url');
+  if(savedUrl) {
+    SYNC_CONFIG.apiUrl = savedUrl;
+    const cfgEl = document.getElementById('cfg-api');
+    if(cfgEl) cfgEl.value = savedUrl;
+    const stEl = document.getElementById('api-status');
+    if(stEl) stEl.textContent = '✅ Đã kết nối: ' + savedUrl.slice(0,50) + '...';
+    startAutoSync();
+  }
+  // Pull latest data immediately
+  if(savedUrl) setTimeout(()=>syncNow(true).then(refreshUI), 500);
+};
+
+// Override testAPI if exists
+window.testAPI = testAndSaveApi;
+</script>
+</body>
+</html>

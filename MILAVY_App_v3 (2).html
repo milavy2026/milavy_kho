@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MILAVY KHO">
+<meta name="theme-color" content="#C8385A">
+<title>MILAVY KHO v3</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --p:#C8385A;--ps:#F5A7B8;--dark:#1A1A2E;--acc:#2C3E50;
+  --gr:#1A6632;--lgr:#D5F5E3;--rd:#922B21;--lrd:#FADBD8;
+  --or:#BA4A00;--lor:#FDEBD0;--bl:#1A5276;--lbl:#D6EAF8;
+  --pu:#6C3483;--lpu:#F5EEF8;--gy:#F2F3F4;--dgy:#616A6B;
+  --wh:#FFFFFF;--yl:#FEF9E7;--teal:#0E6655;--lteal:#E8F8F5;
+}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f5eef0;min-height:100vh;overflow-x:hidden}
+.screen{display:none;min-height:100vh;padding-bottom:80px}
+.screen.active{display:block}
+.app-hdr{background:linear-gradient(135deg,var(--p),var(--dark));padding:env(safe-area-inset-top) 0 0;position:sticky;top:0;z-index:200;box-shadow:0 4px 20px rgba(200,56,90,.4)}
+.hdr-inner{padding:14px 18px 12px;display:flex;align-items:center;gap:10}
+.hdr-title{color:#fff;font-size:17px;font-weight:800}
+.hdr-sub{color:var(--ps);font-size:11px;margin-top:1px}
+.hdr-right{margin-left:auto;text-align:right}
+.hdr-time{color:rgba(255,255,255,.9);font-size:15px;font-weight:700}
+.hdr-date{color:var(--ps);font-size:11px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #f0e0e5;display:grid;grid-template-columns:repeat(5,1fr);padding:6px 0 env(safe-area-inset-bottom);z-index:300;box-shadow:0 -4px 20px rgba(0,0,0,.08)}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;border:none;background:none;cursor:pointer;color:var(--dgy);font-size:10px;font-weight:600;transition:color .15s}
+.nav-btn .ico{font-size:21px;transition:transform .2s}
+.nav-btn.active{color:var(--p)}
+.nav-btn.active .ico{transform:scale(1.15)}
+.card{background:#fff;border-radius:16px;padding:18px;margin:0 14px 14px;box-shadow:0 2px 12px rgba(0,0,0,.07)}
+.card-title{font-size:14px;font-weight:700;color:var(--acc);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.f-group{margin-bottom:14px}
+.f-label{font-size:11px;font-weight:700;color:var(--dgy);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.f-select,.f-input{width:100%;padding:13px 14px;border:2px solid #f0e0e5;border-radius:12px;font-size:15px;color:var(--acc);background:#fff;outline:none;appearance:none;-webkit-appearance:none;transition:border-color .2s;font-family:inherit}
+.f-select:focus,.f-input:focus{border-color:var(--p)}
+.f-textarea{width:100%;padding:13px 14px;border:2px solid #f0e0e5;border-radius:12px;font-size:14px;color:var(--acc);background:#fff;outline:none;resize:none;font-family:inherit;transition:border-color .2s}
+.f-textarea:focus{border-color:var(--p)}
+.btn{width:100%;padding:15px;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:transform .1s,opacity .2s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn:active{transform:scale(.98);opacity:.9}
+.btn-primary{background:var(--p);color:#fff;box-shadow:0 4px 15px rgba(200,56,90,.35)}
+.btn-green{background:var(--gr);color:#fff}
+.btn-red{background:var(--rd);color:#fff}
+.btn-ghost{background:#fff;color:var(--p);border:2px solid var(--p)}
+.btn-dark{background:var(--dark);color:#fff}
+.btn-sm{width:auto;padding:9px 16px;font-size:13px;border-radius:9px}
+.badge{display:inline-flex;align-items:center;justify-content:center;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700}
+.badge-ok{background:var(--lgr);color:var(--gr)}
+.badge-x{background:var(--lrd);color:var(--rd)}
+.badge-pend{background:var(--lbl);color:var(--bl)}
+.badge-or{background:var(--lor);color:var(--or)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 14px 14px}
+.stat{background:#fff;border-radius:14px;padding:14px 8px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.stat-num{font-size:26px;font-weight:800}
+.stat-lbl{font-size:10px;color:var(--dgy);margin-top:3px;font-weight:600}
+.list-item{padding:13px 16px;border-bottom:1px solid #f8f0f3;display:flex;align-items:center;gap:12px}
+.list-item:last-child{border-bottom:none}
+.li-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.li-body{flex:1;min-width:0}
+.li-title{font-size:14px;font-weight:700;color:var(--acc)}
+.li-sub{font-size:11px;color:var(--dgy);margin-top:2px}
+.li-right{text-align:right;flex-shrink:0}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;opacity:0;pointer-events:none;transition:opacity .25s;display:flex;align-items:flex-end}
+.modal-bg.show{opacity:1;pointer-events:all}
+.modal-sheet{background:#fff;width:100%;border-radius:20px 20px 0 0;padding:24px 20px 40px;transform:translateY(100%);transition:transform .3s ease}
+.modal-bg.show .modal-sheet{transform:translateY(0)}
+.modal-handle{width:40px;height:4px;background:#e0d0d5;border-radius:99px;margin:0 auto 18px}
+.modal-title{font-size:17px;font-weight:800;color:var(--acc);margin-bottom:6px}
+.modal-sub{font-size:13px;color:var(--dgy);margin-bottom:18px}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.choice-btn{padding:13px 8px;border:2px solid #f0e0e5;border-radius:12px;background:#fff;font-size:13px;color:var(--acc);cursor:pointer;text-align:center;transition:all .15s;font-weight:600;font-family:inherit}
+.choice-btn.sel{border-color:var(--rd);background:var(--lrd);color:var(--rd)}
+.toast{position:fixed;bottom:90px;left:14px;right:14px;padding:14px 18px;border-radius:14px;color:#fff;font-size:14px;font-weight:700;text-align:center;z-index:999;opacity:0;transform:translateY(16px);transition:all .3s;pointer-events:none;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.ok{background:var(--gr)}
+.toast.err{background:var(--rd)}
+.toast.warn{background:var(--or)}
+.scan-zone{background:var(--dark);border-radius:14px;overflow:hidden;min-height:220px;position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:#fff}
+.scan-line{position:absolute;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,var(--p),transparent);animation:scanMove 2.5s ease-in-out infinite;border-radius:2px}
+@keyframes scanMove{0%,100%{top:15%}50%{top:80%}}
+#reader video{width:100%;display:block;border-radius:14px}
+.setup-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:30px 20px;background:linear-gradient(160deg,#fff 0%,#fdf0f3 100%)}
+.home-hero{background:linear-gradient(135deg,var(--p),var(--dark));padding:20px 18px 24px;margin-bottom:0}
+.hero-greeting{color:rgba(255,255,255,.8);font-size:13px}
+.hero-name{color:#fff;font-size:22px;font-weight:800;margin:2px 0 6px}
+.hero-meta{display:flex;gap:8px;flex-wrap:wrap}
+.hero-tag{background:rgba(255,255,255,.15);color:#fff;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 14px 14px}
+.qa-btn{background:#fff;border-radius:14px;padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;border:2px solid #f0e0e5;cursor:pointer;transition:all .2s;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.qa-btn:active{transform:scale(.97)}
+.qa-ico{font-size:28px}
+.qa-lbl{font-size:12px;font-weight:700;color:var(--acc);text-align:center}
+.qa-sub{font-size:10px;color:var(--dgy);text-align:center}
+.prog-wrap{height:8px;background:#f0e0e5;border-radius:99px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(--p),var(--or));border-radius:99px;transition:width .5s}
+.sec-hdr{padding:14px 18px 6px;font-size:12px;font-weight:700;color:var(--dgy);text-transform:uppercase;letter-spacing:.8px}
+.scroll-list{max-height:350px;overflow-y:auto}
+.empty{display:flex;flex-direction:column;align-items:center;padding:40px 20px;color:var(--dgy)}
+.empty-ico{font-size:50px;margin-bottom:10px;opacity:.5}
+.empty-txt{font-size:14px;font-weight:600}
+/* ── PIPELINE STEPS ── */
+.pipeline{display:flex;align-items:center;gap:0;margin:0 14px 14px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.pip-step{flex:1;padding:10px 6px;text-align:center;font-size:10px;font-weight:700;color:var(--dgy);border-right:1px solid #f0e0e5;cursor:pointer;transition:all .2s;position:relative}
+.pip-step:last-child{border-right:none}
+.pip-step.done{background:var(--lgr);color:var(--gr)}
+.pip-step.active{background:var(--lbl);color:var(--bl)}
+.pip-step.pending{background:var(--gy);color:var(--dgy)}
+.pip-step .pip-ico{font-size:18px;display:block;margin-bottom:3px}
+.pip-step .pip-num{position:absolute;top:4px;right:4px;width:16px;height:16px;border-radius:50%;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.pip-step.done .pip-num{background:var(--gr);color:#fff}
+.pip-step.active .pip-num{background:var(--bl);color:#fff}
+/* ── ORDER CARD ── */
+.order-card{background:#fff;border-radius:14px;margin:0 14px 10px;box-shadow:0 2px 10px rgba(0,0,0,.06);overflow:hidden}
+.order-hdr{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #f0e0e5}
+.order-id{font-size:13px;font-weight:700;color:var(--bl);font-family:monospace}
+.order-body{padding:12px 14px}
+.step-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.step-pill{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.sp-done{background:var(--lgr);color:var(--gr)}
+.sp-active{background:var(--lbl);color:var(--bl)}
+.sp-pend{background:var(--gy);color:var(--dgy)}
+/* ── CALENDAR ── */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:14px}
+.cal-head{text-align:center;font-size:10px;font-weight:700;color:var(--dgy);padding:4px 0}
+.cal-day{text-align:center;padding:8px 4px;border-radius:8px;font-size:12px;cursor:pointer;transition:all .15s}
+.cal-day.today{background:var(--p);color:#fff;font-weight:700}
+.cal-day.has-shift{background:var(--lgr);color:var(--gr);font-weight:700}
+.cal-day.has-ot{background:var(--lor);color:var(--or);font-weight:700}
+.cal-day.day-off{background:var(--lrd);color:var(--rd)}
+.cal-day.empty{opacity:0;pointer-events:none}
+/* ── SALARY BREAKDOWN ── */
+.sal-section{margin-bottom:14px}
+.sal-section-title{font-size:12px;font-weight:700;color:var(--dgy);text-transform:uppercase;letter-spacing:.5px;padding:8px 0;border-bottom:1px solid #f0e0e5;margin-bottom:8px}
+.sal-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f8f0f3}
+.sal-row:last-child{border-bottom:none}
+.sal-lbl{font-size:13px;color:var(--acc)}
+.sal-val{font-size:13px;font-weight:700;color:var(--acc)}
+.sal-val.green{color:var(--gr)}
+.sal-val.red{color:var(--rd)}
+.sal-total-row{display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--p);border-radius:12px;margin-top:12px}
+.sal-total-lbl{font-size:14px;font-weight:700;color:#fff}
+.sal-total-val{font-size:20px;font-weight:900;color:#fff}
+/* ── LEAVE REQUEST ── */
+.leave-card{background:#fff;border-radius:14px;margin:0 14px 10px;box-shadow:0 2px 10px rgba(0,0,0,.06);overflow:hidden}
+.leave-status{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.ls-pending{background:var(--lbl);color:var(--bl)}
+.ls-approved{background:var(--lgr);color:var(--gr)}
+.ls-rejected{background:var(--lrd);color:var(--rd)}
+/* ── KPI RING ── */
+.kpi-ring-wrap{display:flex;flex-direction:column;align-items:center;padding:8px 0 16px}
+.kpi-ring{position:relative;width:130px;height:130px}
+.kpi-ring svg{transform:rotate(-90deg)}
+.kpi-val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.kpi-num{font-size:30px;font-weight:800;color:var(--acc)}
+.kpi-lbl{font-size:11px;color:var(--dgy);font-weight:600}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .3s ease forwards}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.pulse{animation:pulse 2s infinite}
+
+.fsec{background:#fff;border-radius:13px;margin:0 12px 10px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.fsec-hdr{padding:12px 14px;font-size:13px;font-weight:700;color:#fff}
+.fsec-body{padding:14px}
+.ck-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #f8f0f3;cursor:pointer}
+.ck-item:last-child{border-bottom:none}
+.ck-box{width:22px;height:22px;border-radius:6px;border:2px solid #e0d0d5;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;color:transparent;font-size:13px;font-weight:700;flex-shrink:0}
+.ck-box.chk{background:var(--gr);border-color:var(--gr);color:#fff}
+.ck-txt{font-size:13px;color:var(--acc);line-height:1.4}
+.prod-card{background:#fff;border-radius:13px;margin:0 12px 9px;box-shadow:0 2px 10px rgba(0,0,0,.06);padding:13px;cursor:pointer}
+.sku-bd{background:var(--lbl);color:var(--bl);padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;font-family:monospace}
+.stk-bar{height:7px;background:#f0e0e5;border-radius:99px;overflow:hidden;margin-top:5px}
+.stk-fill{height:100%;border-radius:99px}
+.inv-loc{font-size:10px;font-weight:700;color:var(--bl);background:var(--lbl);padding:2px 7px;border-radius:5px;font-family:monospace}
+.inv-row{display:flex;align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid #f8f0f3}
+.inv-row:last-child{border-bottom:none}
+.btn-rd{background:var(--rd);color:#fff;box-shadow:0 4px 14px rgba(146,43,33,.3)}
+
+</style>
+</head>
+<body>
+
+<!-- ══ SETUP ══ -->
+<div id="sc-setup" class="screen active">
+<div class="setup-wrap">
+  <div style="font-size:56px;margin-bottom:8px">📦</div>
+  <div style="font-size:28px;font-weight:900;color:var(--p);letter-spacing:2px;margin-bottom:4px">MILAVY</div>
+  <div style="font-size:13px;color:var(--dgy);margin-bottom:32px">Move. Shine. Be You.</div>
+  <div style="background:#fff;border-radius:18px;padding:24px 20px;width:100%;max-width:400px;box-shadow:0 8px 30px rgba(200,56,90,.12);border:1px solid #f5e0e5">
+    <div style="font-size:16px;font-weight:700;color:var(--acc);margin-bottom:16px">🔐 Đăng nhập ca làm việc</div>
+    <div class="f-group">
+      <label class="f-label">Tên nhân viên</label>
+      <select class="f-select" id="s-nv">
+        <option value="">-- Chọn tên của bạn --</option>
+        <option>Lan</option><option>Hoa</option><option>Mai</option>
+        <option>Thu</option><option>Trang</option>
+      </select>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Ca làm việc</label>
+      <select class="f-select" id="s-ca">
+        <option value="Sáng">☀️ Ca Sáng (08:00 – 17:00)</option>
+        <option value="Chiều">🌆 Ca Chiều (11:00 – 20:00)</option>
+        <option value="Part-time">⏱️ Part-time (giờ linh hoạt)</option>
+        <option value="OT">🌙 Tăng ca (OT)</option>
+      </select>
+    </div>
+    <div class="f-group" id="pt-group" style="display:none">
+      <label class="f-label">Giờ làm Part-time</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <input type="time" class="f-input" id="s-pt-from" value="08:00">
+        <input type="time" class="f-input" id="s-pt-to"   value="12:00">
+      </div>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Ngày làm việc</label>
+      <input type="date" class="f-input" id="s-date">
+    </div>
+    <button class="btn btn-primary" onclick="doLogin()">🚀 Bắt đầu ca làm việc</button>
+  </div>
+</div>
+</div>
+
+<!-- ══ MAIN APP ══ -->
+<div id="sc-main" style="display:none">
+<div class="app-hdr">
+  <div class="hdr-inner">
+    <div style="font-size:26px">📦</div>
+    <div>
+      <div class="hdr-title">MILAVY KHO v3</div>
+      <div class="hdr-sub" id="hdr-sub">Đang tải...</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-time" id="hdr-clock">00:00</div>
+      <div class="hdr-date" id="hdr-date">--/--</div>
+    </div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div id="sc-home" class="screen active">
+  <div class="home-hero">
+    <div class="hero-greeting">Xin chào 👋</div>
+    <div class="hero-name" id="h-name">--</div>
+    <div class="hero-meta">
+      <div class="hero-tag" id="h-ca-tag">Ca --</div>
+      <div class="hero-tag" id="h-date-tag">--/--</div>
+      <div class="hero-tag" id="h-don-tag">0 đơn</div>
+    </div>
+  </div>
+  <div style="background:#fff;margin-bottom:14px;padding:16px 18px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+      <span style="font-size:12px;font-weight:700;color:var(--dgy)">TIẾN ĐỘ CA HÔM NAY</span>
+      <span style="font-size:12px;font-weight:700;color:var(--p)" id="h-pct">0%</span>
+    </div>
+    <div class="prog-wrap"><div class="prog-bar" id="h-prog" style="width:0%"></div></div>
+    <div style="display:flex;justify-content:space-between;margin-top:6px">
+      <span style="font-size:11px;color:var(--gr);font-weight:600" id="h-ok-c">✅ 0 OK</span>
+      <span style="font-size:11px;color:var(--rd);font-weight:600" id="h-x-c">❌ 0 X</span>
+    </div>
+  </div>
+  <!-- Pipeline status -->
+  <div class="sec-hdr">Trạng thái dây chuyền hôm nay</div>
+  <div class="pipeline" id="home-pipeline">
+    <div class="pip-step pending" onclick="goTo('orders')"><span class="pip-ico">📋</span>Nhận đơn<div class="pip-num" id="pip1">0</div></div>
+    <div class="pip-step pending" onclick="goTo('orders')"><span class="pip-ico">📦</span>Lấy hàng<div class="pip-num" id="pip2">0</div></div>
+    <div class="pip-step pending" onclick="goTo('orders')"><span class="pip-ico">🎁</span>Đóng gói<div class="pip-num" id="pip3">0</div></div>
+    <div class="pip-step pending" onclick="goTo('orders')"><span class="pip-ico">🚚</span>Bàn giao<div class="pip-num" id="pip4">0</div></div>
+  </div>
+  <div class="sec-hdr">Thao tác nhanh</div>
+  <div class="qa-grid">
+    <div class="qa-btn" onclick="goTo('scan')"><div class="qa-ico">📷</div><div class="qa-lbl">Quét Đơn</div><div class="qa-sub">Scan QR / barcode</div></div>
+    <div class="qa-btn" onclick="goTo('orders')"><div class="qa-ico">📋</div><div class="qa-lbl">Xử lý Đơn</div><div class="qa-sub">4 bước pipeline</div></div>
+    <div class="qa-btn" onclick="goTo('att')"><div class="qa-ico">📅</div><div class="qa-lbl">Chấm Công</div><div class="qa-sub">Check-in / lịch làm</div></div>
+    <div class="qa-btn" onclick="goTo('salary')"><div class="qa-ico">💰</div><div class="qa-lbl">Xem Lương</div><div class="qa-sub">Chi tiết + BHXH</div></div>
+    <div class="qa-btn" onclick="goTo('leave')"><div class="qa-ico">🏖️</div><div class="qa-lbl">Đăng ký Nghỉ</div><div class="qa-sub">Gửi đơn cho QL</div></div>
+    <div class="qa-btn" onclick="goTo('kpi')"><div class="qa-ico">📊</div><div class="qa-lbl">KPI của tôi</div><div class="qa-sub">Điểm tháng này</div></div>
+  </div>
+</div>
+
+<!-- SCAN -->
+<div id="sc-scan" class="screen">
+  <div class="sec-hdr">Quét mã QR / Barcode đơn hàng</div>
+  <div class="card">
+    <div id="cam-placeholder" class="scan-zone" style="min-height:230px">
+      <div style="font-size:48px;opacity:.5" class="pulse">📷</div>
+      <div style="font-size:14px;opacity:.7">Nhấn nút bên dưới để bật camera</div>
+    </div>
+    <div id="reader" style="display:none;border-radius:14px;overflow:hidden"></div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn btn-dark btn-sm" id="cam-btn" onclick="toggleCam()" style="flex:1">📷 Bật Camera</button>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('manual-in').focus()" style="flex:1">⌨️ Nhập tay</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">⌨️ Nhập mã đơn thủ công</div>
+    <div style="display:flex;gap:8px">
+      <input type="text" class="f-input" id="manual-in" name="man-in" placeholder="Nhập mã đơn..." style="flex:1" inputmode="text">
+      <button class="btn btn-primary btn-sm" onclick="processManual()">➤</button>
+    </div>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div style="padding:14px 16px 10px;font-size:13px;font-weight:700;color:var(--acc);display:flex;justify-content:space-between">
+      <span>📋 Đơn trong ca (<span id="scan-count">0</span>)</span>
+    </div>
+    <div class="scroll-list" id="scan-list">
+      <div class="empty"><div class="empty-ico">📦</div><div class="empty-txt">Chưa có đơn – Bắt đầu quét!</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ORDERS – 4 bước pipeline -->
+<div id="sc-orders" class="screen">
+  <div class="sec-hdr">Xử lý đơn hàng – 4 bước</div>
+  <div class="card" style="padding:10px 14px">
+    <div style="display:flex;gap:6px;font-size:11px;flex-wrap:wrap">
+      <span style="background:var(--lgr);color:var(--gr);padding:3px 8px;border-radius:20px;font-weight:700">✅ Hoàn thành</span>
+      <span style="background:var(--lbl);color:var(--bl);padding:3px 8px;border-radius:20px;font-weight:700">⬤ Đang xử lý</span>
+      <span style="background:var(--gy);color:var(--dgy);padding:3px 8px;border-radius:20px;font-weight:700">○ Chờ</span>
+    </div>
+  </div>
+  <!-- Filter tabs -->
+  <div style="display:flex;gap:8px;padding:0 14px 10px;overflow-x:auto">
+    <button class="btn btn-primary btn-sm" onclick="filterOrders('all',this)" id="f-all">Tất cả</button>
+    <button class="btn btn-ghost btn-sm" onclick="filterOrders('received',this)" id="f-1">📋 Nhận đơn</button>
+    <button class="btn btn-ghost btn-sm" onclick="filterOrders('picked',this)" id="f-2">📦 Lấy hàng</button>
+    <button class="btn btn-ghost btn-sm" onclick="filterOrders('packed',this)" id="f-3">🎁 Đóng gói</button>
+    <button class="btn btn-ghost btn-sm" onclick="filterOrders('shipped',this)" id="f-4">🚚 Bàn giao</button>
+  </div>
+  <div id="orders-list">
+    <div class="empty"><div class="empty-ico">📋</div><div class="empty-txt">Chưa có đơn nào<br>Quét QR để thêm đơn</div></div>
+  </div>
+  <div style="padding:0 14px">
+    <button class="btn btn-primary" onclick="goTo('scan')">📷 Quét thêm đơn mới</button>
+  </div>
+</div>
+
+<!-- CHẤM CÔNG + LỊCH -->
+<div id="sc-att" class="screen">
+  <div class="sec-hdr">Chấm công & Lịch làm việc</div>
+  <!-- Check-in card -->
+  <div class="card">
+    <div id="att-status-box" style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--lbl);border-radius:12px;margin-bottom:14px">
+      <div style="width:12px;height:12px;border-radius:50%;background:var(--bl);flex-shrink:0"></div>
+      <div>
+        <div style="font-size:14px;font-weight:700;color:var(--bl)" id="att-status-txt">Chưa check-in</div>
+        <div style="font-size:11px;color:var(--dgy)" id="att-sub-txt">Nhấn Check-in khi vào ca</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      <div style="background:var(--lgr);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:11px;color:var(--gr);font-weight:700">GIỜ VÀO</div>
+        <div style="font-size:20px;font-weight:800;color:var(--gr)" id="att-in">--:--</div>
+      </div>
+      <div style="background:var(--lrd);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:11px;color:var(--rd);font-weight:700">GIỜ RA</div>
+        <div style="font-size:20px;font-weight:800;color:var(--rd)" id="att-out">--:--</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button class="btn btn-green" id="btn-ci" onclick="checkIn()">✅ Check-in</button>
+      <button class="btn btn-red" id="btn-co" onclick="checkOut()" disabled style="opacity:.4">🔴 Check-out</button>
+    </div>
+  </div>
+  <!-- Calendar -->
+  <div class="card">
+    <div class="card-title">📅 Lịch làm việc tháng này</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <button onclick="prevMonth()" style="background:none;border:none;font-size:18px;cursor:pointer;padding:4px 8px">←</button>
+      <div style="font-size:14px;font-weight:700;color:var(--acc)" id="cal-month-lbl">--</div>
+      <button onclick="nextMonth()" style="background:none;border:none;font-size:18px;cursor:pointer;padding:4px 8px">→</button>
+    </div>
+    <div class="cal-grid" id="cal-header" style="padding:0 0 8px">
+      <div class="cal-head">CN</div><div class="cal-head">T2</div><div class="cal-head">T3</div>
+      <div class="cal-head">T4</div><div class="cal-head">T5</div><div class="cal-head">T6</div><div class="cal-head">T7</div>
+    </div>
+    <div class="cal-grid" id="cal-body"></div>
+    <div style="display:flex;gap:8px;margin-top:10px;font-size:11px;flex-wrap:wrap">
+      <span><span style="background:var(--lgr);padding:2px 6px;border-radius:4px;color:var(--gr)">■</span> Ngày làm</span>
+      <span><span style="background:var(--lor);padding:2px 6px;border-radius:4px;color:var(--or)">■</span> Tăng ca</span>
+      <span><span style="background:var(--lrd);padding:2px 6px;border-radius:4px;color:var(--rd)">■</span> Nghỉ phép</span>
+      <span><span style="background:var(--p);padding:2px 6px;border-radius:4px;color:#fff">■</span> Hôm nay</span>
+    </div>
+  </div>
+  <!-- Thống kê -->
+  <div class="card" style="background:var(--yl);border:1px solid #e8c878">
+    <div style="font-size:13px;color:var(--or);font-weight:700;margin-bottom:10px">📊 Thống kê tháng này</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center">
+      <div><div style="font-size:20px;font-weight:800;color:var(--gr)" id="att-ok-d">0</div><div style="font-size:10px;color:var(--dgy)">Ngày công</div></div>
+      <div><div style="font-size:20px;font-weight:800;color:var(--or)" id="att-ot-h">0</div><div style="font-size:10px;color:var(--dgy)">Giờ OT</div></div>
+      <div><div style="font-size:20px;font-weight:800;color:var(--rd)" id="att-late-d">0</div><div style="font-size:10px;color:var(--dgy)">Đi trễ</div></div>
+      <div><div style="font-size:20px;font-weight:800;color:var(--bl)" id="att-leave-d">0</div><div style="font-size:10px;color:var(--dgy)">Nghỉ phép</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- LƯƠNG -->
+<div id="sc-salary" class="screen">
+  <div class="sec-hdr">Bảng lương chi tiết tháng này</div>
+  <div class="card">
+    <div class="card-title">💼 Thông tin vị trí</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:10px;background:var(--gy);border-radius:10px">
+      <div style="font-size:28px" id="sal-pos-ico">📦</div>
+      <div>
+        <div style="font-size:14px;font-weight:700;color:var(--acc)" id="sal-pos-name">--</div>
+        <div style="font-size:12px;color:var(--dgy)" id="sal-pos-type">--</div>
+      </div>
+      <div style="margin-left:auto;text-align:right">
+        <div style="font-size:11px;color:var(--dgy)">Lương CB/tháng</div>
+        <div style="font-size:16px;font-weight:800;color:var(--gr)" id="sal-base-show">--</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">💰 Thu nhập</div>
+    <div id="sal-income-rows"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">📉 Khấu trừ</div>
+    <div id="sal-deduct-rows"></div>
+    <div style="margin-top:10px;padding:10px;background:var(--gy);border-radius:8px;font-size:11px;color:var(--dgy);line-height:1.6">
+      <strong>BHXH:</strong> NV đóng 8% · Công ty đóng 17.5%<br>
+      <strong>BHYT:</strong> NV đóng 1.5% · Công ty đóng 3%<br>
+      <strong>BHTN:</strong> NV đóng 1% · Công ty đóng 1%<br>
+      Tổng NV đóng: <strong>10.5%</strong> lương đóng BH
+    </div>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div id="sal-total-box"></div>
+    <div style="padding:14px;font-size:11px;color:var(--dgy);text-align:center">
+      * Lương thực nhận = Tổng thu nhập – Tổng khấu trừ. Kế toán xác nhận cuối tháng.
+    </div>
+  </div>
+</div>
+
+<!-- ĐĂNG KÝ NGHỈ -->
+<div id="sc-leave" class="screen">
+  <div class="sec-hdr">Đăng ký nghỉ phép</div>
+  <div class="card">
+    <div class="card-title">🏖️ Gửi đơn xin nghỉ</div>
+    <div class="f-group">
+      <label class="f-label">Loại nghỉ</label>
+      <select class="f-select" id="lv-type">
+        <option value="Nghỉ phép năm">🌴 Nghỉ phép năm (còn <span id="lv-remain">12</span> ngày)</option>
+        <option value="Nghỉ bệnh">🏥 Nghỉ bệnh / ốm</option>
+        <option value="Nghỉ việc riêng">👨‍👩‍👧 Nghỉ việc riêng</option>
+        <option value="Nghỉ không lương">💸 Nghỉ không lương</option>
+      </select>
+    </div>
+    <div class="f-group">
+      <label class="f-label">Từ ngày</label>
+      <input type="date" class="f-input" id="lv-from">
+    </div>
+    <div class="f-group">
+      <label class="f-label">Đến ngày</label>
+      <input type="date" class="f-input" id="lv-to">
+    </div>
+    <div class="f-group">
+      <label class="f-label">Lý do (bắt buộc)</label>
+      <textarea class="f-textarea" id="lv-reason" rows="3" placeholder="Mô tả lý do xin nghỉ..."></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="submitLeave()">📤 Gửi đơn xin nghỉ</button>
+  </div>
+  <div class="sec-hdr">Lịch sử đơn nghỉ của tôi</div>
+  <div id="leave-list">
+    <div class="empty"><div class="empty-ico">🏖️</div><div class="empty-txt">Chưa có đơn nghỉ nào</div></div>
+  </div>
+</div>
+
+<!-- KPI -->
+<div id="sc-kpi" class="screen">
+  <div class="sec-hdr">KPI & Hiệu suất của tôi</div>
+  <div class="card">
+    <div class="card-title">📊 Điểm KPI tháng này</div>
+    <div class="kpi-ring-wrap">
+      <div class="kpi-ring">
+        <svg width="130" height="130" viewBox="0 0 130 130">
+          <circle cx="65" cy="65" r="55" fill="none" stroke="#f0e0e5" stroke-width="12"/>
+          <circle cx="65" cy="65" r="55" fill="none" stroke="var(--p)" stroke-width="12" stroke-dasharray="345.4" id="kpi-circle" stroke-dashoffset="34.5" stroke-linecap="round"/>
+        </svg>
+        <div class="kpi-val">
+          <div class="kpi-num" id="kpi-score">90</div>
+          <div class="kpi-lbl">điểm</div>
+        </div>
+      </div>
+      <div id="kpi-rank" style="margin-top:10px;font-size:15px;font-weight:700;color:var(--p)">⭐⭐ Tốt</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+      <div style="background:var(--lbl);border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:10px;color:var(--bl);font-weight:700">ĐƠN OK</div>
+        <div style="font-size:20px;font-weight:800;color:var(--bl)" id="kpi-ok">0</div>
+      </div>
+      <div style="background:var(--lrd);border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:10px;color:var(--rd);font-weight:700">ĐƠN X</div>
+        <div style="font-size:20px;font-weight:800;color:var(--rd)" id="kpi-x">0</div>
+      </div>
+      <div style="background:var(--lor);border-radius:10px;padding:10px;text-align:center">
+        <div style="font-size:10px;color:var(--or);font-weight:700">ĐI TRỄ</div>
+        <div style="font-size:20px;font-weight:800;color:var(--or)" id="kpi-late">0</div>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="background:var(--yl)">
+    <div style="font-size:13px;color:var(--or);font-weight:700;margin-bottom:10px">📋 Lỗi KPI đã ghi nhận</div>
+    <div id="kpi-errors">
+      <div class="empty" style="padding:16px 0"><div class="empty-ico" style="font-size:24px">✅</div><div class="empty-txt" style="font-size:12px">Chưa có lỗi!</div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ HÀNG HOÀN – NH-01 ═══ -->
+<div id="sc-hoan" class="screen">
+  <div class="sec-hdr">Mẫu NH-01 – Xử lý hàng hoàn</div>
+  <div style="margin:0 12px 10px;background:var(--lrd);border:1px solid var(--ps);border-radius:13px;padding:12px;font-size:12px;color:var(--rd);font-weight:700">⚠️ BẮT BUỘC: Bật camera khu hàng hoàn trước khi khui gói!</div>
+  <div class="fsec">
+    <div class="fsec-hdr" style="background:var(--or)">📦 Thông tin đơn hoàn</div>
+    <div class="fsec-body">
+      <div class="f-group"><label class="f-label">Mã đơn hoàn</label>
+        <div style="display:flex;gap:7px">
+          <input type="text" class="f-input" id="hn-ma" placeholder="Nhập hoặc quét mã..." style="flex:1">
+          <button class="btn btn-dark btn-sm" onclick="scanHoanQR()" id="hn-cam-btn" style="flex-shrink:0;padding:0 14px">📷</button>
+        </div>
+        <div id="hn-reader" style="display:none;margin-top:8px;border-radius:11px;overflow:hidden"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="f-group"><label class="f-label">Loại hoàn</label><select class="f-select" id="hn-loai"><option value="THHT">🔴 THHT – Khách trả</option><option value="Bom">🟡 Bom – Không giao được</option></select></div>
+        <div class="f-group"><label class="f-label">Kênh bán</label><select class="f-select" id="hn-kenh"><option>Shopee</option><option>TikTok</option><option>Lazada</option><option>Facebook</option><option>Website</option></select></div>
+      </div>
+    </div>
+  </div>
+  <div class="fsec">
+    <div class="fsec-hdr" style="background:var(--rd)">🔍 8 Tiêu chí kiểm NH-01 (bắt buộc)</div>
+    <div style="padding:4px 14px 10px">
+      <div class="ck-item" onclick="this.querySelector('.ck-box').classList.toggle('chk')"><div class="ck-box">✓</div><div class="ck-txt"><b>1.</b> Số lượng sản phẩm đủ trong gói</div></div>
+      <div class="ck-item" onclick="this.querySelector('.ck-box').classList.toggle('chk')"><div class="ck-box">✓</div><div class="ck-txt"><b>2.</b> Đúng mẫu / model sản phẩm</div></div>
+      <div class="ck-item" onclick="this.querySelector('.ck-box').classList.toggle('chk')"><div class="ck-box">✓</div><div class="ck-txt"><b>3.</b> Đúng màu sắc so với đơn hàng gốc</div></div>
+      <div class="ck-item" onclick="this.querySelector('.ck-box').classList.toggle('chk')"><div class="ck-box">✓</div><div class="ck-txt"><b>4.</b> Đúng kích thước (size)</div></div>
+      <div class="ck-item" onclick="this.querySelector('.ck-box').classList.toggle('chk')"><div class="ck-box">✓</div><div class="ck-txt"><b>5.</b> Tag / nhãn sản phẩm còn nguyên vẹn</div></div>
+      <div class="ck-item" onclick="this.querySelector('.ck-box').classList.toggle('chk')" style="background:#fff5f5"><div class="ck-box">✓</div><div class="ck-txt"><b>6.</b> Không có mùi lạ (mồ hôi / nước hoa / thuốc lá)</div></div>
+      <div class="ck-item" onclick="this.querySelector('.ck-box').classList.toggle('chk')"><div class="ck-box">✓</div><div class="ck-txt"><b>7.</b> Tình trạng tốt – không bẩn / rách / ố vàng</div></div>
+      <div class="ck-item" onclick="this.querySelector('.ck-box').classList.toggle('chk')" style="background:#fff5f5"><div class="ck-box">✓</div><div class="ck-txt"><b>8.</b> Không có dấu hiệu đã qua sử dụng</div></div>
+    </div>
+  </div>
+  <div class="fsec">
+    <div class="fsec-hdr" style="background:var(--acc)">📋 Kết quả & Xử lý</div>
+    <div class="fsec-body">
+      <div class="f-group"><label class="f-label">Kết quả kiểm</label>
+        <select class="f-select" id="hn-kq" onchange="onHKQ()">
+          <optgroup label="✅ ĐẠT"><option value="Đạt – tái bán">✅ Đạt – Có thể tái bán</option></optgroup>
+          <optgroup label="🚨 TRÁO HÀNG">
+            <option value="Tráo – SP khác">🚨 Tráo hàng – Gửi sản phẩm khác</option>
+            <option value="Tráo – sai màu/size">🚨 Tráo – Sai màu / size / mẫu</option>
+            <option value="Hàng giả/nhái">🚨 Hàng giả / nhái MILAVY</option>
+          </optgroup>
+          <optgroup label="🧹 HƯ HỎNG">
+            <option value="Bẩn rõ ràng">🧹 Có vết bẩn rõ ràng</option>
+            <option value="Có mùi lạ">👃 Có mùi lạ</option>
+            <option value="Đã qua sử dụng">👗 Đã mặc / sử dụng</option>
+            <option value="Bị rách/hỏng">✂️ Bị rách / xổ chỉ</option>
+          </optgroup>
+          <optgroup label="⚠️ THIẾU/SAI">
+            <option value="Thiếu hàng">⚠️ Thiếu hàng trong gói</option>
+            <option value="Mất tag">🏷️ Mất tag / nhãn sản phẩm</option>
+          </optgroup>
+          <optgroup label="⏳ CHỜ">
+            <option value="Chờ QL">⏳ Chờ quản lý xem xét</option>
+            <option value="Cần đối chiếu video">🎥 Cần đối chiếu video đóng gói</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="f-group"><label class="f-label">Mức độ</label>
+        <select class="f-select" id="hn-md"><option>🟢 Bình thường</option><option>🟡 Cần chú ý – Báo tổ trưởng</option><option>🔴 Khẩn cấp – Tráo hàng</option><option>🔴 Khẩn cấp – Khiếu nại gay gắt</option></select>
+      </div>
+      <div class="f-group"><label class="f-label">Hành động xử lý</label>
+        <select class="f-select" id="hn-hd">
+          <option>Nhập kho tái bán</option><option>Lưu bằng chứng – Chờ khiếu nại</option>
+          <option>Báo CSKH liên hệ khách ngay</option><option>Lập biên bản tráo hàng – Báo QL</option>
+          <option>Từ chối hoàn tiền – Có bằng chứng camera</option>
+          <option>Khu hàng lỗi – Chờ QL quyết định</option>
+          <option>Gửi bù hàng cho khách</option><option>Hoàn tiền toàn bộ</option>
+          <option>Chờ đối chiếu video đóng gói</option><option>Chờ QL quyết định</option>
+        </select>
+      </div>
+      <div class="f-group" id="hn-kn-grp" style="display:none"><label class="f-label" style="color:var(--rd)">⚠️ Ghi chú khiếu nại</label><textarea class="f-textarea" id="hn-kn" rows="3" placeholder="Mô tả chi tiết tình trạng..."></textarea></div>
+      <div class="f-group"><label class="f-label">Lý do / Ghi chú</label><textarea class="f-textarea" id="hn-note" rows="2" placeholder="Ghi rõ lý do hoàn..."></textarea></div>
+      <div class="f-group"><label class="f-label">📸 Chụp ảnh bằng chứng</label>
+        <input type="file" accept="image/*" capture="environment" id="hn-anh" style="width:100%;padding:9px;border:2px dashed var(--ps);border-radius:11px;background:var(--gy);font-size:12px;color:var(--dgy)">
+      </div>
+      <div id="hn-prev" style="display:none;margin-bottom:11px"><img id="hn-img" style="width:100%;border-radius:11px;max-height:180px;object-fit:cover"></div>
+    </div>
+  </div>
+  <div style="padding:0 12px 14px"><button class="btn btn-primary" onclick="submitHN()">✅ Lưu hàng hoàn (NH-01)</button></div>
+  <div class="sec-hdr">Lịch sử hàng hoàn</div>
+  <div style="margin:0 12px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07)">
+    <div class="scroll-list" id="hn-list"><div class="empty"><div class="empty-ico">↩️</div><div class="empty-txt">Chưa có hàng hoàn</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ HÀNG LỖI – HL-01 ═══ -->
+<div id="sc-defects" class="screen">
+  <div class="sec-hdr">Mẫu HL-01 – Ghi nhận hàng lỗi</div>
+  <div class="fsec">
+    <div class="fsec-hdr" style="background:var(--rd)">⚠️ Thông tin hàng lỗi</div>
+    <div class="fsec-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="f-group"><label class="f-label">Mã SKU</label><input type="text" class="f-input" id="hl-sku" placeholder="AML08-DE-M"></div>
+        <div class="f-group"><label class="f-label">Tên sản phẩm</label><input type="text" class="f-input" id="hl-name" placeholder="Áo AML08 Đen M"></div>
+        <div class="f-group"><label class="f-label">Số lượng lỗi</label><input type="number" class="f-input" id="hl-qty" value="1" min="1"></div>
+        <div class="f-group"><label class="f-label">Vị trí kho</label><input type="text" class="f-input" id="hl-loc" placeholder="T1-A01-03"></div>
+      </div>
+      <div class="f-group"><label class="f-label">Loại lỗi</label>
+        <select class="f-select" id="hl-loai">
+          <option value="Lỗi NCC">🏭 Lỗi NCC – Từ nhà sản xuất</option>
+          <option value="Bẩn/Hỏng kho">🧹 Bẩn / Hỏng do kho</option>
+          <option value="Mất tag">🏷️ Mất tag / nhãn</option>
+          <option value="Hoàn không đạt">↩️ Từ hàng hoàn không đạt</option>
+          <option value="Phát hiện muộn">⏰ Phát hiện muộn trong kho</option>
+        </select>
+      </div>
+      <div class="f-group"><label class="f-label">Phát hiện tại bước</label>
+        <select class="f-select" id="hl-buoc"><option>Nhận hàng từ NCC</option><option>Lưu kho</option><option>Picking – lấy hàng</option><option>Packing – đóng gói</option><option>Hàng hoàn</option></select>
+      </div>
+      <div class="f-group"><label class="f-label">Mô tả chi tiết</label><textarea class="f-textarea" id="hl-mota" rows="3" placeholder="Vị trí lỗi, mức độ, đặc điểm..."></textarea></div>
+      <div class="f-group"><label class="f-label">📸 Chụp ảnh lỗi (bắt buộc)</label>
+        <input type="file" accept="image/*" capture="environment" id="hl-anh" style="width:100%;padding:9px;border:2px dashed var(--ps);border-radius:11px;background:var(--gy);font-size:12px;color:var(--dgy)">
+      </div>
+      <div id="hl-prev" style="display:none;margin-bottom:11px"><img id="hl-img" style="width:100%;border-radius:11px;max-height:180px;object-fit:cover"></div>
+      <div class="f-group"><label class="f-label">Đề xuất xử lý</label>
+        <select class="f-select" id="hl-hd"><option>Chờ QL quyết định</option><option>Trả NCC – lấy hàng đổi</option><option>Giảm giá thanh lý</option><option>Tiêu hủy (cần biên bản QL)</option><option>Sửa chữa</option></select>
+      </div>
+    </div>
+  </div>
+  <div style="margin:0 12px 12px;background:var(--lrd);border:1px solid var(--rd);border-radius:12px;padding:12px;font-size:12px;color:var(--rd);font-weight:700">⚠️ Không tự ý tiêu hủy khi chưa có quyết định bằng văn bản của quản lý!</div>
+  <div style="padding:0 12px 14px"><button class="btn btn-rd" onclick="submitHL()">⚠️ Lưu hàng lỗi (HL-01)</button></div>
+  <div class="sec-hdr">Nhật ký hàng lỗi</div>
+  <div style="margin:0 12px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07)">
+    <div class="scroll-list" id="hl-list"><div class="empty"><div class="empty-ico">⚠️</div><div class="empty-txt">Chưa có hàng lỗi</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ BÀN GIAO CA – BG-01 ═══ -->
+<div id="sc-handover" class="screen">
+  <div class="sec-hdr">Mẫu BG-01 – Phiếu bàn giao ca</div>
+  <div class="fsec">
+    <div class="fsec-hdr" style="background:var(--acc)">📋 A. Số liệu đơn hàng</div>
+    <div class="fsec-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="f-group"><label class="f-label">Tổng đơn nhận</label><input type="number" class="f-input" id="bg-tot" placeholder="0"></div>
+        <div class="f-group"><label class="f-label" style="color:var(--gr)">Đơn OK ✅</label><input type="number" class="f-input" id="bg-ok2" placeholder="0" style="border-color:var(--gr)"></div>
+        <div class="f-group"><label class="f-label">Đã bàn giao ĐVVC</label><input type="number" class="f-input" id="bg-dvvc" placeholder="0"></div>
+        <div class="f-group"><label class="f-label" style="color:var(--rd)">Đơn X / tồn ❌</label><input type="number" class="f-input" id="bg-xdon" placeholder="0" style="border-color:var(--rd)"></div>
+      </div>
+      <div class="f-group"><label class="f-label">Đơn ưu tiên ca sau</label><textarea class="f-textarea" id="bg-prio" rows="2" placeholder="Mã đơn, lý do..."></textarea></div>
+    </div>
+  </div>
+  <div class="fsec">
+    <div class="fsec-hdr" style="background:var(--or)">↩️ B. Hàng hoàn & Lỗi</div>
+    <div class="fsec-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="f-group"><label class="f-label">Hoàn THHT</label><input type="number" class="f-input" id="bg-thht" placeholder="0"></div>
+        <div class="f-group"><label class="f-label">Hàng Bom</label><input type="number" class="f-input" id="bg-bom" placeholder="0"></div>
+        <div class="f-group"><label class="f-label">Hàng lỗi</label><input type="number" class="f-input" id="bg-loi2" placeholder="0"></div>
+        <div class="f-group"><label class="f-label" style="color:var(--rd)">🚨 Tráo hàng</label><input type="number" class="f-input" id="bg-fraud2" placeholder="0" style="border-color:var(--rd)"></div>
+      </div>
+    </div>
+  </div>
+  <div class="fsec">
+    <div class="fsec-hdr" style="background:var(--bl)">🔧 C. Checklist vật tư</div>
+    <div style="padding:6px 14px 10px" id="bg-ck">
+      <div class="ck-item" onclick="this.querySelector('.ck-box').classList.toggle('chk')"><div class="ck-box">✓</div><div class="ck-txt">Thùng carton đủ các cỡ S/M/L/XL</div></div>
+      <div class="ck-item" onclick="this.querySelector('.ck-box').classList.toggle('chk')"><div class="ck-box">✓</div><div class="ck-txt">Túi PE / Túi zip đủ dùng</div></div>
+      <div class="ck-item" onclick="this.querySelector('.ck-box').classList.toggle('chk')"><div class="ck-box">✓</div><div class="ck-txt">Băng keo / Dao rọc còn sử dụng</div></div>
+      <div class="ck-item" onclick="this.querySelector('.ck-box').classList.toggle('chk')"><div class="ck-box">✓</div><div class="ck-txt">Máy in bill có mực đầy đủ</div></div>
+      <div class="ck-item" onclick="this.querySelector('.ck-box').classList.toggle('chk')"><div class="ck-box">✓</div><div class="ck-txt">Camera đóng gói đang hoạt động ✅</div></div>
+      <div class="ck-item" onclick="this.querySelector('.ck-box').classList.toggle('chk')"><div class="ck-box">✓</div><div class="ck-txt">Khu packing đã dọn sạch sẽ</div></div>
+      <div class="ck-item" onclick="this.querySelector('.ck-box').classList.toggle('chk')"><div class="ck-box">✓</div><div class="ck-txt">Excel hoa hồng đã cập nhật đầy đủ</div></div>
+    </div>
+  </div>
+  <div class="fsec">
+    <div class="fsec-hdr" style="background:var(--dgy)">📝 D. Sự cố & Lưu ý</div>
+    <div class="fsec-body">
+      <div class="f-group"><label class="f-label">Sự cố trong ca</label><textarea class="f-textarea" id="bg-inc" rows="2" placeholder="Không có / Mô tả sự cố..."></textarea></div>
+      <div class="f-group"><label class="f-label">Lưu ý cho ca sau</label><textarea class="f-textarea" id="bg-note2" rows="2" placeholder="Đơn ưu tiên, khách VIP..."></textarea></div>
+      <div class="f-group"><label class="f-label">NV nhận ca</label>
+        <select class="f-select" id="bg-next"><option value="">-- Chọn NV nhận ca --</option>
+          <option>Lan</option><option>Hoa</option><option>Mai</option><option>Thu</option><option>Trang</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div style="padding:0 12px 14px"><button class="btn btn-primary" onclick="submitBG()">✅ Lưu phiếu bàn giao (BG-01)</button></div>
+  <div class="sec-hdr">Lịch sử bàn giao</div>
+  <div style="margin:0 12px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07)">
+    <div class="scroll-list" id="bg-hist"><div class="empty"><div class="empty-ico">🔄</div><div class="empty-txt">Chưa có bàn giao</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ SẢN PHẨM ═══ -->
+<div id="sc-products" class="screen">
+  <div class="sec-hdr">Quản lý sản phẩm & Tồn kho (SKU MILAVY)</div>
+  <div style="display:flex;gap:7px;padding:0 12px 9px">
+    <input type="text" class="f-input" id="prod-q" placeholder="🔍 Tìm SKU hoặc tên..." style="flex:1;font-size:13px" oninput="renderProds()">
+    <button class="btn btn-primary btn-sm" onclick="openModal('prod-add-mo')">+ Thêm</button>
+  </div>
+  <div style="display:flex;gap:6px;padding:0 12px 9px;overflow-x:auto">
+    <button class="btn btn-primary btn-sm" id="pf-all" onclick="fProd('all',this)">Tất cả</button>
+    <button class="btn btn-ghost btn-sm" id="pf-gym" onclick="fProd('Gym',this)">Gym</button>
+    <button class="btn btn-ghost btn-sm" id="pf-ten" onclick="fProd('Tennis',this)">Tennis</button>
+    <button class="btn btn-ghost btn-sm" id="pf-yog" onclick="fProd('Yoga',this)">Yoga</button>
+    <button class="btn btn-ghost btn-sm" id="pf-act" onclick="fProd('Activewear',this)">Activewear</button>
+    <button class="btn btn-ghost btn-sm" id="pf-pk" onclick="fProd('Phụ kiện',this)">Phụ kiện</button>
+    <button class="btn btn-ghost btn-sm" id="pf-low" onclick="fProd('low',this)">⚠️ Sắp hết</button>
+  </div>
+  <div id="prod-list"></div>
+</div>
+
+<!-- ═══ KIỂM KHO – KK-02 ═══ -->
+<div id="sc-inventory" class="screen">
+  <div class="sec-hdr">Mẫu KK-02 – Kiểm kho định kỳ</div>
+  <div class="card">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+      <div class="f-group"><label class="f-label">Loại kiểm</label>
+        <select class="f-select" id="kk-type"><option>Kiểm kho ngày</option><option>Kiểm kho tuần</option><option>Kiểm kho tháng</option><option>Kiểm kho đột xuất</option></select>
+      </div>
+      <div class="f-group"><label class="f-label">Khu vực</label>
+        <select class="f-select" id="kk-area"><option>Toàn bộ kho</option><option>T1-Khu A</option><option>T1-Khu B</option><option>T2-Khu C</option><option>T2-Khu D</option><option>T3-Khu E</option><option>T3-Khu F</option></select>
+      </div>
+    </div>
+  </div>
+  <div style="margin:0 12px 10px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07)">
+    <div id="kk-list"><div class="empty"><div class="empty-ico">🔍</div><div class="empty-txt">Chưa có dòng kiểm</div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">➕ Thêm dòng kiểm kho</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+      <div class="f-group"><label class="f-label">Mã vị trí</label><input type="text" class="f-input" id="kk-loc" placeholder="T1-A01-03"></div>
+      <div class="f-group"><label class="f-label">Mã SKU</label><input type="text" class="f-input" id="kk-sku" placeholder="AML08-DE-M"></div>
+      <div class="f-group"><label class="f-label">Tồn hệ thống</label><input type="number" class="f-input" id="kk-sys" placeholder="0" min="0"></div>
+      <div class="f-group"><label class="f-label">Thực đếm</label><input type="number" class="f-input" id="kk-real" placeholder="0" min="0"></div>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="addKKRow()" style="width:auto">+ Thêm dòng</button>
+  </div>
+  <div style="padding:0 12px 14px"><button class="btn btn-primary" onclick="submitKK()">✅ Hoàn thành kiểm kho (KK-02)</button></div>
+  <div class="sec-hdr">Kết quả kiểm gần đây</div>
+  <div style="margin:0 12px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07)">
+    <div class="scroll-list" id="kk-hist"><div class="empty"><div class="empty-ico">🔍</div><div class="empty-txt">Chưa có kết quả</div></div></div>
+  </div>
+</div>
+
+<!-- ═══ CHẤM ĐIỂM 5S – 5S-01 ═══ -->
+<div id="sc-s5" class="screen">
+  <div class="sec-hdr">Kết quả chấm điểm 5S – Tuần này</div>
+  <div class="card" style="background:var(--light-blue,#EBF5FB);border:1px solid #AED6F1">
+    <div style="font-size:12px;color:var(--blue,#1A5276);font-weight:700;margin-bottom:6px">ℹ️ Lưu ý</div>
+    <div style="font-size:12px;color:#2C3E50">Điểm 5S do <strong>giám sát / CEO</strong> chấm trên Dashboard.<br>Nhân viên xem kết quả tại đây.</div>
+  </div>
+  <!-- Kết quả tuần mới nhất -->
+  <div class="card" id="s5-latest-card">
+    <div class="card-title">🌟 Kết quả 5S mới nhất</div>
+    <div id="s5-nv-latest"><div class="empty" style="padding:16px 0"><div class="empty-ico" style="font-size:28px">🌟</div><div class="empty-txt" style="font-size:12px">Chưa có kết quả tuần này</div></div></div>
+  </div>
+  <!-- Lịch sử -->
+  <div class="sec-hdr">Lịch sử chấm điểm 5S</div>
+  <div style="margin:0 12px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07)">
+    <div class="scroll-list" id="s5-hist-nv"><div class="empty"><div class="empty-ico">🌟</div><div class="empty-txt">Chưa có kết quả 5S</div></div></div>
+  </div>
+</div>
+
+</div><!-- sc-main -->
+
+<nav class="nav" id="main-nav" style="display:none">
+  <button class="nav-btn active" id="nav-home"   onclick="goTo('home')"  ><span class="ico">🏠</span>Trang chủ</button>
+  <button class="nav-btn"        id="nav-scan"   onclick="goTo('scan')"  ><span class="ico">📷</span>Quét đơn</button>
+  <button class="nav-btn"        id="nav-orders" onclick="goTo('orders')"><span class="ico">📋</span>Đơn hàng</button>
+  <button class="nav-btn"        id="nav-att"    onclick="goTo('att')"   ><span class="ico">📅</span>Chấm công</button>
+  <button class="nav-btn"        id="nav-salary" onclick="goTo('salary')"><span class="ico">💰</span>Lương</button>
+  <button class="nav-btn" id="nav-hoan"      onclick="goTo('hoan')"     ><span class="ico">↩️</span>Hàng hoàn</button>
+  <button class="nav-btn" id="nav-defects"   onclick="goTo('defects')"  ><span class="ico">⚠️</span>Hàng lỗi</button>
+  <button class="nav-btn" id="nav-handover"  onclick="goTo('handover')" ><span class="ico">🔄</span>Bàn giao</button>
+  <button class="nav-btn" id="nav-products"  onclick="goTo('products')" ><span class="ico">🏷️</span>Sản phẩm</button>
+  <button class="nav-btn" id="nav-inventory" onclick="goTo('inventory')"><span class="ico">🔍</span>Kiểm kho</button>
+  <button class="nav-btn" id="nav-s5"        onclick="goTo('s5')"       ><span class="ico">🌟</span>5S</button>
+</nav>
+
+<!-- STATUS CHOICE POPUP -->
+<div class="modal-bg" id="status-modal">
+<div class="modal-sheet">
+  <div class="modal-handle"></div>
+  <div class="modal-title">📦 Đơn vừa quét</div>
+  <div class="modal-sub" id="mo-order-id" style="font-weight:700;color:var(--bl);word-break:break-all">--</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+    <button onclick="recordOK()" style="padding:18px;background:var(--gr);color:#fff;border:none;border-radius:14px;font-size:18px;font-weight:800;cursor:pointer;font-family:inherit">✅<br><span style="font-size:13px">OK – Xử lý xong</span></button>
+    <button onclick="showX()" style="padding:18px;background:var(--rd);color:#fff;border:none;border-radius:14px;font-size:18px;font-weight:800;cursor:pointer;font-family:inherit">❌<br><span style="font-size:13px">X – Chưa xong</span></button>
+  </div>
+  <button onclick="closeModal('status-modal')" style="width:100%;margin-top:12px;padding:12px;background:none;border:2px solid #f0e0e5;border-radius:12px;font-size:14px;color:var(--dgy);cursor:pointer;font-family:inherit">Hủy</button>
+</div></div>
+
+<!-- REASON MODAL -->
+<div class="modal-bg" id="reason-modal">
+<div class="modal-sheet">
+  <div class="modal-handle"></div>
+  <div class="modal-title" style="color:var(--rd)">❌ Lý do đơn X</div>
+  <div class="modal-sub">Bắt buộc chọn lý do trước khi lưu</div>
+  <div class="choice-grid">
+    <button class="choice-btn" onclick="selReason(this,'Hết hàng / thiếu hàng')">📦 Hết hàng</button>
+    <button class="choice-btn" onclick="selReason(this,'Sai size / màu / mẫu')">⚠️ Sai size/màu</button>
+    <button class="choice-btn" onclick="selReason(this,'Lỗi hệ thống TMĐT')">💻 Lỗi hệ thống</button>
+    <button class="choice-btn" onclick="selReason(this,'Khách hủy đơn')">🚫 Khách hủy</button>
+    <button class="choice-btn" onclick="selReason(this,'Địa chỉ không rõ')">📍 Địa chỉ lỗi</button>
+    <button class="choice-btn" onclick="selReason(this,'Chờ xác nhận CSKH')">⏳ Chờ xác nhận</button>
+  </div>
+  <input type="text" class="f-input" id="reason-custom" placeholder="Hoặc nhập lý do khác..." style="margin-bottom:12px">
+  <button class="btn btn-red" onclick="confirmX()">Xác nhận đơn X</button>
+  <div style="height:8px"></div>
+  <button onclick="closeModal('reason-modal')" style="width:100%;padding:12px;background:none;border:2px solid #f0e0e5;border-radius:12px;font-size:14px;color:var(--dgy);cursor:pointer;font-family:inherit">Hủy</button>
+</div></div>
+
+<!-- UPDATE STEP MODAL -->
+<div class="modal-bg" id="step-modal">
+<div class="modal-sheet">
+  <div class="modal-handle"></div>
+  <div class="modal-title" id="step-modal-title">Cập nhật bước xử lý</div>
+  <div class="modal-sub" id="step-modal-order">Mã đơn: --</div>
+  <div id="step-btns" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px"></div>
+  <div style="height:8px"></div>
+  <button onclick="closeModal('step-modal')" style="width:100%;padding:12px;background:none;border:2px solid #f0e0e5;border-radius:12px;font-size:14px;color:var(--dgy);cursor:pointer;font-family:inherit">Đóng</button>
+</div></div>
+
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<script>
+// ═══ CONFIG ════════════════════════════════════════════════════════
+const POSITIONS = {
+  'NV Kho':           { ico:'📦', type:'Full-time', base:6000000,  bhBase:6000000  },
+  'Tổ trưởng kho':   { ico:'👑', type:'Full-time', base:8000000,  bhBase:8000000  },
+  'CSKH':             { ico:'💬', type:'Full-time', base:6500000,  bhBase:6500000  },
+  'Marketing':        { ico:'📣', type:'Full-time', base:7000000,  bhBase:7000000  },
+  'Quản lý vận hành':{ ico:'🗂️', type:'Full-time', base:12000000, bhBase:12000000 },
+  'Kế toán':          { ico:'💼', type:'Full-time', base:8000000,  bhBase:8000000  },
+  'NV Part-time':     { ico:'⏱️', type:'Part-time', base:35000,    bhBase:0, perHour:true },
+};
+const NV_POSITIONS = {
+  Lan:'NV Kho', Hoa:'NV Kho', Mai:'Tổ trưởng kho', Thu:'CSKH', Trang:'Marketing'
+};
+const OT_RATE    = 1.5;  // Hệ số lương OT ngày thường
+const OT_HOL_RATE= 2.0;  // Hệ số lương OT ngày lễ/nghỉ
+const HOLIDAYS_2026 = ['2026-01-01','2026-04-30','2026-05-01','2026-09-02','2026-01-28','2026-01-29','2026-01-30'];
+const BH_RATES = { bhxh:0.08, bhyt:0.015, bhtn:0.01 }; // NV đóng
+const CFG = { ngayCong:26, pca:25000, pco:500000, nguongPCO:22, hh:500, kpiXS:97, thuongXS:500000 };
+
+// ═══ STATE ═══════════════════════════════════════════════════════════
+let sess=null, pendingId=null, selReasonTxt='', camActive=false, qr=null;
+let stepPendingOrder=null;
+let calYear=new Date().getFullYear(), calMonth=new Date().getMonth();
+
+const getRecords = () => JSON.parse(localStorage.getItem('mv_records')||'[]');
+const getAtt     = () => JSON.parse(localStorage.getItem('mv_att')||'[]');
+const getLeaves  = () => JSON.parse(localStorage.getItem('mv_leaves')||'[]');
+const getHoan    = () => JSON.parse(localStorage.getItem('mv_hoan')||'[]');
+const saveR      = r  => localStorage.setItem('mv_records',JSON.stringify(r));
+const saveAtt    = a  => localStorage.setItem('mv_att',JSON.stringify(a));
+const saveLeaves = l  => localStorage.setItem('mv_leaves',JSON.stringify(l));
+const today      = () => new Date().toISOString().slice(0,10);
+const thisMonth  = () => new Date().toISOString().slice(0,7);
+const fmt        = n  => new Intl.NumberFormat('vi-VN').format(Math.round(n))+'đ';
+const getSessRecs= () => { if(!sess) return []; return getRecords().filter(r=>r.nv===sess.nv&&r.date===sess.date&&r.ca===sess.ca); };
+
+// ═══ INIT ═════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  const t=new Date(); document.getElementById('s-date').value=t.toISOString().slice(0,10);
+  const last=localStorage.getItem('mv_last_sess');
+  if(last){const l=JSON.parse(last);document.getElementById('s-nv').value=l.nv||'';document.getElementById('s-ca').value=l.ca||'Sáng';}
+  document.getElementById('s-ca').addEventListener('change',function(){
+    document.getElementById('pt-group').style.display=this.value==='Part-time'?'block':'none';
+  });
+  document.getElementById('manual-in').addEventListener('keydown',e=>{if(e.key==='Enter')processManual();});
+  document.querySelectorAll('.modal-bg').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');}));
+  startClock();
+});
+
+function startClock(){
+  setInterval(()=>{
+    const n=new Date();
+    if(document.getElementById('hdr-clock'))document.getElementById('hdr-clock').textContent=n.toTimeString().slice(0,5);
+    if(document.getElementById('hdr-date'))document.getElementById('hdr-date').textContent=n.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit'});
+  },1000);
+}
+
+// ═══ LOGIN ════════════════════════════════════════════════════════════
+function doLogin(){
+  const nv=document.getElementById('s-nv').value;
+  const ca=document.getElementById('s-ca').value;
+  const date=document.getElementById('s-date').value;
+  if(!nv){toast('Chọn tên của bạn!','err');return;}
+  let ptFrom='',ptTo='';
+  if(ca==='Part-time'){ptFrom=document.getElementById('s-pt-from').value;ptTo=document.getElementById('s-pt-to').value;}
+  sess={nv,ca,date,ptFrom,ptTo,pos:NV_POSITIONS[nv]||'NV Kho'};
+  localStorage.setItem('mv_last_sess',JSON.stringify({nv,ca}));
+  document.getElementById('sc-setup').style.display='none';
+  document.getElementById('sc-main').style.display='block';
+  document.getElementById('main-nav').style.display='grid';
+  document.getElementById('hdr-sub').textContent=`${nv} • Ca ${ca}${ca==='Part-time'?` (${ptFrom}-${ptTo})`:''}`;
+  document.getElementById('h-name').textContent=nv;
+  document.getElementById('h-ca-tag').textContent=`Ca ${ca}`;
+  const d=new Date(date+'T12:00:00');
+  document.getElementById('h-date-tag').textContent=d.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit'});
+  updateHome();updateAtt();updateKPI();renderSalary();renderLeaves();
+  toast(`Xin chào ${nv}! Ca ${ca} bắt đầu 🎉`,'ok');
+}
+
+// ═══ NAVIGATION ═══════════════════════════════════════════════════════
+function goTo(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const sc=document.getElementById('sc-'+name);
+  if(sc){sc.classList.add('active');sc.classList.add('fade-up');setTimeout(()=>sc.classList.remove('fade-up'),400);}
+  const nb=document.getElementById('nav-'+name);
+  if(nb)nb.classList.add('active');
+  if(name!=='scan'&&camActive)stopCam();
+  if(name==='att'){renderCalendar();updateAtt();}
+  if(name==='orders')renderOrders('all');
+  if(name==='kpi')updateKPI();
+  if(name==='salary')renderSalary();
+  if(name==='leave')renderLeaves();
+}
+
+// ═══ HOME ═════════════════════════════════════════════════════════════
+function updateHome(){
+  if(!sess)return;
+  const sr=getSessRecs();
+  const okN=sr.filter(r=>r.status==='OK').length;
+  const xN=sr.filter(r=>r.status==='X').length;
+  const tot=sr.length;
+  document.getElementById('h-don-tag').textContent=`${tot} đơn`;
+  document.getElementById('h-ok-c').textContent=`✅ ${okN} OK`;
+  document.getElementById('h-x-c').textContent=`❌ ${xN} X`;
+  const pct=tot>0?Math.round(okN/tot*100):0;
+  document.getElementById('h-pct').textContent=pct+'%';
+  document.getElementById('h-prog').style.width=pct+'%';
+  // Pipeline counts
+  const allRecs=getRecords().filter(r=>r.nv===sess.nv&&r.date===sess.date);
+  const p=[0,0,0,0];
+  allRecs.forEach(r=>{
+    const s=r.pipeStep||0;
+    if(s>=1)p[0]++;if(s>=2)p[1]++;if(s>=3)p[2]++;if(s>=4)p[3]++;
+  });
+  ['pip1','pip2','pip3','pip4'].forEach((id,i)=>{
+    document.getElementById(id).textContent=p[i]||'';
+    const el=document.getElementById(id).parentElement;
+    if(p[i]>0&&p[i]===allRecs.length)el.className='pip-step done';
+    else if(p[i]>0)el.className='pip-step active';
+    else el.className='pip-step pending';
+  });
+}
+
+// ═══ CAMERA & SCAN ════════════════════════════════════════════════════
+function toggleCam(){camActive?stopCam():startCam();}
+function startCam(){
+  if(typeof Html5Qrcode==='undefined'){toast('Camera không khả dụng – dùng nhập tay','warn');return;}
+  document.getElementById('cam-placeholder').style.display='none';
+  document.getElementById('reader').style.display='block';
+  document.getElementById('cam-btn').textContent='⏹ Tắt Camera';
+  camActive=true;
+  qr=new Html5Qrcode('reader');
+  qr.start({facingMode:'environment'},{fps:10,qrbox:{width:220,height:180}},(text)=>{
+    if(navigator.vibrate)navigator.vibrate(60);
+    processOrder(text.trim());
+    qr.pause();setTimeout(()=>{if(qr&&camActive)qr.resume();},2000);
+  },()=>{}).catch(()=>{toast('Không bật được camera','warn');stopCam();});
+}
+function stopCam(){
+  document.getElementById('cam-btn').textContent='📷 Bật Camera';
+  document.getElementById('reader').style.display='none';
+  document.getElementById('cam-placeholder').style.display='flex';
+  camActive=false;
+  if(qr){qr.stop().catch(()=>{});qr=null;}
+}
+function procManual(){processManual();}
+function manIn(){processManual();}
+function processManual(){
+  const v=document.getElementById('manual-in').value.trim();
+  if(!v){toast('Nhập mã đơn!','err');return;}
+  if(!sess){toast('Thiết lập ca trước!','err');return;}
+  processOrder(v);document.getElementById('manual-in').value='';
+}
+function processOrder(id){
+  if(!sess){toast('Thiết lập ca trước!','err');return;}
+  const recs=getRecords();
+  const dup=recs.find(r=>r.orderId===id&&r.date===sess.date&&r.nv===sess.nv);
+  if(dup){toast(`⚠️ Mã ...${id.slice(-8)} đã nhập rồi!`,'warn');return;}
+  pendingId=id;
+  document.getElementById('mo-order-id').textContent=id;
+  openModal('status-modal');
+}
+
+// ═══ ORDER STATUS ═════════════════════════════════════════════════════
+function recordOK(){
+  closeModal('status-modal');
+  const now=new Date();
+  const recs=getRecords();
+  recs.push({id:Date.now(),orderId:pendingId,nv:sess.nv,ca:sess.ca,date:sess.date,kenh:'',status:'OK',reason:'',time:now.toTimeString().slice(0,5),ts:now.toISOString(),pipeStep:1,stepHistory:[{step:1,name:'Nhận đơn',nv:sess.nv,time:now.toTimeString().slice(0,5)}]});
+  saveR(recs);updateScan();updateHome();
+  toast(`✅ OK – ...${pendingId.slice(-8)} – Bước 1: Nhận đơn`,'ok');
+  if(navigator.vibrate)navigator.vibrate([50,50,100]);
+}
+function showX(){closeModal('status-modal');selReasonTxt='';document.getElementById('reason-custom').value='';document.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('sel'));openModal('reason-modal');}
+function selReason(btn,r){document.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');selReasonTxt=r;document.getElementById('reason-custom').value='';}
+function confirmX(){
+  const custom=document.getElementById('reason-custom').value.trim();
+  const reason=custom||selReasonTxt;
+  if(!reason){toast('Chọn hoặc nhập lý do!','err');return;}
+  closeModal('reason-modal');
+  const now=new Date();
+  const recs=getRecords();
+  recs.push({id:Date.now(),orderId:pendingId,nv:sess.nv,ca:sess.ca,date:sess.date,kenh:'',status:'X',reason,time:now.toTimeString().slice(0,5),ts:now.toISOString(),pipeStep:0,stepHistory:[]});
+  saveR(recs);updateScan();updateHome();
+  toast(`❌ X – ${reason}`,'err');
+  if(navigator.vibrate)navigator.vibrate(300);
+}
+
+// ═══ PIPELINE STEPS ═══════════════════════════════════════════════════
+const STEPS=[
+  {id:1,name:'Nhận đơn',   ico:'📋',color:'var(--bl)',bg:'var(--lbl)'},
+  {id:2,name:'Lấy hàng',   ico:'📦',color:'var(--or)',bg:'var(--lor)'},
+  {id:3,name:'Đóng gói',   ico:'🎁',color:'var(--pu)',bg:'var(--lpu)'},
+  {id:4,name:'Bàn giao',   ico:'🚚',color:'var(--gr)',bg:'var(--lgr)'},
+];
+function openStepModal(orderId){
+  stepPendingOrder=orderId;
+  const recs=getRecords();
+  const rec=recs.find(r=>r.orderId===orderId);
+  if(!rec)return;
+  document.getElementById('step-modal-order').textContent='Mã: '+orderId;
+  document.getElementById('step-modal-title').textContent='Cập nhật bước xử lý';
+  const curStep=rec.pipeStep||0;
+  const btns=document.getElementById('step-btns');
+  btns.innerHTML=STEPS.map(s=>`
+    <button onclick="updateStep('${orderId}',${s.id})" style="padding:14px 8px;border:2px solid ${s.color};border-radius:12px;background:${curStep>=s.id?s.bg:'#fff'};cursor:pointer;font-family:inherit;text-align:center;transition:all .2s;opacity:${s.id<=curStep+1?1:.4}">
+      <div style="font-size:22px">${s.ico}</div>
+      <div style="font-size:12px;font-weight:700;color:${s.color};margin-top:4px">${s.name}</div>
+      ${curStep>=s.id?'<div style="font-size:10px;color:var(--gr);margin-top:2px">✅ Xong</div>':''}
+    </button>`).join('');
+  openModal('step-modal');
+}
+function updateStep(orderId,stepId){
+  if(!sess){toast('Thiết lập ca trước!','err');return;}
+  const recs=getRecords();
+  const idx=recs.findIndex(r=>r.orderId===orderId);
+  if(idx<0)return;
+  if(stepId<recs[idx].pipeStep){toast('Không thể quay lại bước trước!','warn');return;}
+  const now=new Date();
+  recs[idx].pipeStep=stepId;
+  if(!recs[idx].stepHistory)recs[idx].stepHistory=[];
+  recs[idx].stepHistory.push({step:stepId,name:STEPS[stepId-1].name,nv:sess.nv,time:now.toTimeString().slice(0,5)});
+  if(stepId===4)recs[idx].status='OK'; // Hoàn tất khi bàn giao
+  saveR(recs);
+  closeModal('step-modal');
+  renderOrders(document.getElementById('f-all').classList.contains('btn-primary')?'all':
+    document.getElementById('f-1').classList.contains('btn-primary')?'received':
+    document.getElementById('f-2').classList.contains('btn-primary')?'picked':
+    document.getElementById('f-3').classList.contains('btn-primary')?'packed':'shipped');
+  updateHome();
+  toast(`✅ Bước ${stepId}: ${STEPS[stepId-1].name} – ${orderId.slice(-8)}`,'ok');
+  if(navigator.vibrate)navigator.vibrate([50,100]);
+}
+
+// ═══ ORDERS LIST ══════════════════════════════════════════════════════
+function filterOrders(filter,btn){
+  document.querySelectorAll('.qa-grid .qa-btn').forEach(b=>b.classList.remove('btn-primary'));
+  document.querySelectorAll('#sc-orders button.btn-sm').forEach(b=>{b.classList.remove('btn-primary');b.classList.add('btn-ghost');});
+  if(btn){btn.classList.add('btn-primary');btn.classList.remove('btn-ghost');}
+  renderOrders(filter);
+}
+function renderOrders(filter){
+  if(!sess)return;
+  const recs=getRecords().filter(r=>r.nv===sess.nv&&r.date===sess.date);
+  const filtered=recs.filter(r=>{
+    if(filter==='all')return true;
+    if(filter==='received')return(r.pipeStep||0)===1;
+    if(filter==='picked')return(r.pipeStep||0)===2;
+    if(filter==='packed')return(r.pipeStep||0)===3;
+    if(filter==='shipped')return(r.pipeStep||0)>=4;
+    return true;
+  }).reverse();
+  const el=document.getElementById('orders-list');
+  if(!filtered.length){el.innerHTML='<div class="empty"><div class="empty-ico">📋</div><div class="empty-txt">Không có đơn nào<br>ở bước này</div></div>';return;}
+  el.innerHTML=filtered.map(r=>{
+    const step=r.pipeStep||0;
+    const pills=STEPS.map(s=>`<span class="step-pill ${step>s.id?'sp-done':step===s.id?'sp-active':'sp-pend'}">${s.ico} ${s.name}</span>`).join('');
+    const lastStep=r.stepHistory?.[r.stepHistory.length-1];
+    return `<div class="order-card">
+      <div class="order-hdr">
+        <span class="order-id">${r.orderId}</span>
+        <span class="badge badge-${r.status==='OK'?'ok':r.status==='X'?'x':'pend'}">${r.status==='OK'?'✅ OK':r.status==='X'?'❌ X':'⏳ Đang xử lý'}</span>
+      </div>
+      <div class="order-body">
+        <div style="font-size:12px;color:var(--dgy);margin-bottom:8px">${r.ca} • ${r.time}${lastStep?' • Cập nhật: '+lastStep.name+' ('+lastStep.nv+')':''}</div>
+        <div class="step-pills">${pills}</div>
+        ${step<4&&r.status!=='X'?`<button onclick="openStepModal('${r.orderId}')" style="margin-top:10px;width:100%;padding:10px;background:var(--lbl);border:2px solid var(--bl);border-radius:10px;color:var(--bl);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">▶ Cập nhật bước tiếp theo</button>`:''}
+        ${r.reason?`<div style="font-size:11px;color:var(--rd);margin-top:6px">Lý do X: ${r.reason}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+function updateScan(){
+  const sr=getSessRecs();
+  document.getElementById('scan-count').textContent=sr.length;
+  const list=document.getElementById('scan-list');
+  if(!sr.length){list.innerHTML='<div class="empty"><div class="empty-ico">📦</div><div class="empty-txt">Chưa có đơn – Bắt đầu quét!</div></div>';return;}
+  list.innerHTML=[...sr].reverse().map(r=>`
+    <div class="list-item">
+      <div class="li-ico" style="background:${r.status==='OK'?'var(--lgr)':'var(--lrd)'}">
+        ${r.status==='OK'?'✅':'❌'}
+      </div>
+      <div class="li-body">
+        <div class="li-title" style="font-size:13px">${r.orderId}</div>
+        <div class="li-sub">Bước ${r.pipeStep||0}/4 ${r.reason?' • ❗'+r.reason:''}</div>
+      </div>
+      <div class="li-right"><div style="font-size:12px;color:var(--dgy)">${r.time}</div></div>
+    </div>`).join('');
+}
+
+// ═══ CHẤM CÔNG ════════════════════════════════════════════════════════
+function checkIn(){
+  if(!sess)return;
+  const exist=getAtt().find(r=>r.nv===sess.nv&&r.date===sess.date);
+  if(exist&&exist.timeIn){toast('Đã check-in rồi!','warn');return;}
+  const now=new Date();
+  const timeIn=now.toTimeString().slice(0,5);
+  const [h,m]=timeIn.split(':').map(Number);
+  const caStarts={Sáng:[8,0],Chiều:[11,0],'Part-time':[parseInt((sess.ptFrom||'08:00').split(':')[0]),parseInt((sess.ptFrom||'08:00').split(':')[1])],'OT':[17,0]};
+  const cs=caStarts[sess.ca]||[8,0];
+  const late=(h*60+m)-(cs[0]*60+cs[1]);
+  let status='Đúng giờ';
+  if(late>15)status='Đi trễ >15p';
+  else if(late>5)status='Đi trễ 5-15p';
+  else if(late>0)status='Đi trễ <5p';
+  const atts=getAtt();
+  atts.push({id:Date.now(),nv:sess.nv,ca:sess.ca,date:sess.date,timeIn,timeOut:'',status,late:Math.max(0,late),otHours:0,isHoliday:HOLIDAYS_2026.includes(sess.date)});
+  saveAtt(atts);updateAtt();
+  toast(`✅ Check-in ${timeIn} – ${status}`,'ok');
+}
+function checkOut(){
+  if(!sess)return;
+  const atts=getAtt();
+  const idx=atts.findIndex(r=>r.nv===sess.nv&&r.date===sess.date&&!r.timeOut);
+  if(idx<0){toast('Chưa check-in hoặc đã check-out!','warn');return;}
+  const now=new Date();
+  const timeOut=now.toTimeString().slice(0,5);
+  atts[idx].timeOut=timeOut;
+  // Tính giờ OT nếu ca OT hoặc làm vượt ca
+  if(atts[idx].ca==='OT'){
+    const [h1,m1]=atts[idx].timeIn.split(':').map(Number);
+    const [h2,m2]=timeOut.split(':').map(Number);
+    atts[idx].otHours=Math.max(0,((h2*60+m2)-(h1*60+m1))/60);
+  }
+  saveAtt(atts);updateAtt();
+  toast(`🔴 Check-out ${timeOut}`,'err');
+}
+function updateAtt(){
+  if(!sess)return;
+  const today_=sess.date;
+  const rec=getAtt().find(r=>r.nv===sess.nv&&r.date===today_);
+  const box=document.getElementById('att-status-box');
+  const txt=document.getElementById('att-status-txt');
+  const sub=document.getElementById('att-sub-txt');
+  const ci=document.getElementById('btn-ci');
+  const co=document.getElementById('btn-co');
+  if(rec){
+    document.getElementById('att-in').textContent=rec.timeIn||'--:--';
+    document.getElementById('att-out').textContent=rec.timeOut||'--:--';
+    if(rec.timeOut){
+      box.style.background='var(--lgr)';txt.style.color='var(--gr)';txt.textContent='Đã check-out';
+      sub.textContent=`${rec.timeIn} → ${rec.timeOut}`;
+      ci.disabled=true;ci.style.opacity='.4';co.disabled=true;co.style.opacity='.4';
+    } else {
+      box.style.background='var(--lgr)';txt.style.color='var(--gr)';txt.textContent='Đã check-in – '+rec.status;
+      sub.textContent=`Vào lúc ${rec.timeIn}`;
+      ci.disabled=true;ci.style.opacity='.4';co.disabled=false;co.style.opacity='1';
+    }
+  }
+  // Stats tháng
+  const myAtt=getAtt().filter(r=>r.nv===sess.nv&&r.date?.startsWith(thisMonth()));
+  document.getElementById('att-ok-d').textContent=myAtt.length;
+  document.getElementById('att-ot-h').textContent=myAtt.reduce((s,r)=>s+(r.otHours||0),0).toFixed(1);
+  document.getElementById('att-late-d').textContent=myAtt.filter(r=>r.status?.includes('trễ')).length;
+  const myLeaves=getLeaves().filter(r=>r.nv===sess.nv&&r.status==='approved'&&r.from?.startsWith(thisMonth()));
+  document.getElementById('att-leave-d').textContent=myLeaves.length;
+}
+
+// ═══ CALENDAR ═════════════════════════════════════════════════════════
+function renderCalendar(){
+  const lbl=document.getElementById('cal-month-lbl');
+  lbl.textContent=`Tháng ${calMonth+1}/${calYear}`;
+  const body=document.getElementById('cal-body');
+  const firstDay=new Date(calYear,calMonth,1).getDay();
+  const daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  const todayStr=new Date().toISOString().slice(0,10);
+  const myAtt=sess?getAtt().filter(r=>r.nv===sess.nv):[];
+  const myLeaves=sess?getLeaves().filter(r=>r.nv===sess.nv&&r.status==='approved'):[];
+  let html='';
+  for(let i=0;i<firstDay;i++)html+='<div class="cal-day empty">x</div>';
+  for(let d=1;d<=daysInMonth;d++){
+    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const att=myAtt.find(r=>r.date===ds);
+    const leave=myLeaves.find(r=>r.from<=ds&&r.to>=ds);
+    const isToday=ds===todayStr;
+    const isHol=HOLIDAYS_2026.includes(ds);
+    let cls='cal-day';
+    if(isToday)cls+=' today';
+    else if(leave)cls+=' day-off';
+    else if(att&&att.ca==='OT')cls+=' has-ot';
+    else if(att)cls+=' has-shift';
+    else if(isHol)cls+=' day-off';
+    html+=`<div class="${cls}" title="${att?att.ca+(att.timeIn?' '+att.timeIn:''):''}${leave?' Nghỉ phép':''}${isHol?' Ngày lễ':''}">${d}${att&&att.ca==='OT'?'<sup style="font-size:8px">OT</sup>':''}</div>`;
+  }
+  body.innerHTML=html;
+}
+function prevMonth(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
+function nextMonth(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
+
+// ═══ LƯƠNG ════════════════════════════════════════════════════════════
+function renderSalary(){
+  if(!sess)return;
+  const pos=POSITIONS[sess.pos]||POSITIONS['NV Kho'];
+  document.getElementById('sal-pos-ico').textContent=pos.ico;
+  document.getElementById('sal-pos-name').textContent=sess.pos;
+  document.getElementById('sal-pos-type').textContent=pos.type+(pos.perHour?' – '+fmt(pos.base)+'/giờ':'');
+  document.getElementById('sal-base-show').textContent=pos.perHour?fmt(pos.base)+'/giờ':fmt(pos.base);
+
+  const myAtt=getAtt().filter(r=>r.nv===sess.nv&&r.date?.startsWith(thisMonth()));
+  const myRecs=getRecords().filter(r=>r.nv===sess.nv&&r.date?.startsWith(thisMonth()));
+  const okN=myRecs.filter(r=>r.status==='OK').length;
+  const xN=myRecs.filter(r=>r.status==='X').length;
+
+  // Tính ngày công & OT
+  const ngayCong=myAtt.length;
+  const otHours=myAtt.reduce((s,r)=>s+(r.otHours||0),0);
+  const holidayDays=myAtt.filter(r=>r.isHoliday).length;
+
+  // Lương
+  let luongCB,otPay=0,holPay=0;
+  if(pos.perHour){
+    // Part-time tính theo giờ (giả sử 8h/ngày)
+    luongCB=pos.base*ngayCong*8;
+    otPay=pos.base*otHours*OT_RATE;
+  } else {
+    luongCB=pos.base*ngayCong/CFG.ngayCong;
+    otPay=pos.base/CFG.ngayCong/8*otHours*OT_RATE;
+    holPay=pos.base/CFG.ngayCong*holidayDays*(OT_HOL_RATE-1);
+  }
+
+  // KPI & hoa hồng
+  const kpiDrop=myAtt.reduce((s,r)=>s+(r.status?.includes('>15')?3:r.status?.includes('5-15')?2:r.status?.includes('<5')?1:0),0);
+  const kpi=Math.max(60,100-kpiDrop);
+  const pctHH=kpi>=97?1:kpi>=90?1:kpi>=86?.9:kpi>=80?.8:.6;
+  const hh=okN*CFG.hh*pctHH;
+  const xs=kpi>=CFG.kpiXS?CFG.thuongXS:0;
+  const pcA=CFG.pca*ngayCong;
+  const pcO=ngayCong>=CFG.nguongPCO?CFG.pco:Math.round(CFG.pco/26*ngayCong);
+
+  const totalIncome=luongCB+otPay+holPay+pcA+pcO+hh+xs;
+
+  // BHXH/BHYT/BHTN
+  const bhBase=pos.bhBase||0;
+  const bhxh=bhBase*BH_RATES.bhxh;
+  const bhyt=bhBase*BH_RATES.bhyt;
+  const bhtn=bhBase*BH_RATES.bhtn;
+  const totalBH=bhxh+bhyt+bhtn;
+
+  // Thuế TNCN (đơn giản hóa – thu nhập tính thuế = thu nhập - giảm trừ bản thân 11tr)
+  const taxableIncome=Math.max(0,totalIncome-totalBH-11000000);
+  let tncn=0;
+  if(taxableIncome>80000000)tncn=taxableIncome*.35-9850000;
+  else if(taxableIncome>52000000)tncn=taxableIncome*.3-5850000;
+  else if(taxableIncome>32000000)tncn=taxableIncome*.25-3250000;
+  else if(taxableIncome>18000000)tncn=taxableIncome*.2-1650000;
+  else if(taxableIncome>10000000)tncn=taxableIncome*.15-750000;
+  else if(taxableIncome>5000000)tncn=taxableIncome*.1-250000;
+  else tncn=taxableIncome*.05;
+  tncn=Math.max(0,tncn);
+  const totalDeduct=totalBH+tncn;
+  const netPay=totalIncome-totalDeduct;
+
+  // Render income
+  const incRows=[
+    ['Lương cơ bản ('+ngayCong+' ngày)',luongCB,'green'],
+    otPay>0?['Lương tăng ca ('+otHours.toFixed(1)+'h × '+OT_RATE+')',otPay,'green']:null,
+    holPay>0?['Phụ trội ngày lễ ('+holidayDays+' ngày)',holPay,'green']:null,
+    ['Phụ cấp ăn',pcA,''],
+    ['Phụ cấp ở',pcO,''],
+    ['Hoa hồng kho ('+okN+' đơn × '+Math.round(pctHH*100)+'%)',hh,'green'],
+    xs>0?['Thưởng xuất sắc KPI',xs,'green']:null,
+  ].filter(Boolean);
+  document.getElementById('sal-income-rows').innerHTML=`
+    ${incRows.map(([l,v,c])=>`<div class="sal-row"><div class="sal-lbl">${l}</div><div class="sal-val ${c}">${fmt(v)}</div></div>`).join('')}
+    <div class="sal-row" style="border-top:2px solid var(--p);margin-top:6px;padding-top:10px">
+      <div class="sal-lbl" style="font-weight:700;color:var(--p)">Tổng thu nhập</div>
+      <div class="sal-val" style="color:var(--p);font-size:15px">${fmt(totalIncome)}</div>
+    </div>`;
+
+  // Render deduct
+  document.getElementById('sal-deduct-rows').innerHTML=`
+    <div class="sal-row"><div class="sal-lbl">BHXH (8% × ${fmt(bhBase)})</div><div class="sal-val red">-${fmt(bhxh)}</div></div>
+    <div class="sal-row"><div class="sal-lbl">BHYT (1.5% × ${fmt(bhBase)})</div><div class="sal-val red">-${fmt(bhyt)}</div></div>
+    <div class="sal-row"><div class="sal-lbl">BHTN (1% × ${fmt(bhBase)})</div><div class="sal-val red">-${fmt(bhtn)}</div></div>
+    ${tncn>0?`<div class="sal-row"><div class="sal-lbl">Thuế TNCN (ước tính)</div><div class="sal-val red">-${fmt(tncn)}</div></div>`:''}
+    <div class="sal-row" style="border-top:2px solid var(--rd);margin-top:6px;padding-top:10px">
+      <div class="sal-lbl" style="font-weight:700;color:var(--rd)">Tổng khấu trừ</div>
+      <div class="sal-val" style="color:var(--rd);font-size:15px">-${fmt(totalDeduct)}</div>
+    </div>`;
+
+  document.getElementById('sal-total-box').innerHTML=`
+    <div class="sal-total-row">
+      <div class="sal-total-lbl">💵 THỰC NHẬN THÁNG NÀY</div>
+      <div class="sal-total-val">${fmt(netPay)}</div>
+    </div>`;
+}
+
+// ═══ ĐĂNG KÝ NGHỈ ════════════════════════════════════════════════════
+function submitLeave(){
+  if(!sess){toast('Thiết lập ca trước!','err');return;}
+  const type=document.getElementById('lv-type').value;
+  const from=document.getElementById('lv-from').value;
+  const to=document.getElementById('lv-to').value;
+  const reason=document.getElementById('lv-reason').value.trim();
+  if(!from||!to){toast('Chọn ngày nghỉ!','err');return;}
+  if(!reason){toast('Nhập lý do nghỉ!','err');return;}
+  if(from>to){toast('Ngày bắt đầu phải trước ngày kết thúc!','err');return;}
+  const leaves=getLeaves();
+  leaves.push({id:Date.now(),nv:sess.nv,type,from,to,reason,status:'pending',submittedAt:new Date().toISOString()});
+  saveLeaves(leaves);
+  document.getElementById('lv-reason').value='';
+  renderLeaves();
+  toast('📤 Đã gửi đơn xin nghỉ – Chờ quản lý duyệt!','ok');
+}
+function renderLeaves(){
+  if(!sess)return;
+  const myLeaves=getLeaves().filter(r=>r.nv===sess.nv).reverse();
+  const el=document.getElementById('leave-list');
+  if(!myLeaves.length){el.innerHTML='<div class="empty"><div class="empty-ico">🏖️</div><div class="empty-txt">Chưa có đơn nghỉ nào</div></div>';return;}
+  el.innerHTML=myLeaves.map(r=>{
+    const sc=r.status==='approved'?'ls-approved':r.status==='rejected'?'ls-rejected':'ls-pending';
+    const st=r.status==='approved'?'✅ Đã duyệt':r.status==='rejected'?'❌ Từ chối':'⏳ Chờ duyệt';
+    return `<div class="leave-card">
+      <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #f0e0e5">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--acc)">${r.type}</div>
+          <div style="font-size:12px;color:var(--dgy);margin-top:2px">${r.from} → ${r.to}</div>
+        </div>
+        <span class="leave-status ${sc}">${st}</span>
+      </div>
+      <div style="padding:10px 14px;font-size:12px;color:var(--dgy)">${r.reason}</div>
+    </div>`;
+  }).join('');
+}
+
+// ═══ KPI ══════════════════════════════════════════════════════════════
+function updateKPI(){
+  if(!sess)return;
+  const myRecs=getRecords().filter(r=>r.nv===sess.nv&&r.date?.startsWith(thisMonth()));
+  const okN=myRecs.filter(r=>r.status==='OK').length;
+  const xN=myRecs.filter(r=>r.status==='X').length;
+  const myAtt=getAtt().filter(r=>r.nv===sess.nv&&r.date?.startsWith(thisMonth()));
+  let kpiDrop=0;
+  myAtt.forEach(r=>{if(r.status?.includes('>15'))kpiDrop+=3;else if(r.status?.includes('5-15'))kpiDrop+=2;else if(r.status?.includes('<5'))kpiDrop+=1;});
+  const lateN=myAtt.filter(r=>r.status?.includes('trễ')).length;
+  const kpi=Math.max(60,100-kpiDrop);
+  const rank=kpi>=97?'⭐⭐⭐ Xuất sắc':kpi>=90?'⭐⭐ Tốt':kpi>=80?'⭐ Trung bình':'⚠️ Cần cải thiện';
+  document.getElementById('kpi-ok').textContent=okN;
+  document.getElementById('kpi-x').textContent=xN;
+  document.getElementById('kpi-late').textContent=lateN;
+  document.getElementById('kpi-score').textContent=kpi;
+  document.getElementById('kpi-rank').textContent=rank;
+  const circ=345.4;const offset=circ-(kpi/100)*circ;
+  document.getElementById('kpi-circle').style.strokeDashoffset=offset;
+  document.getElementById('kpi-circle').style.stroke=kpi>=90?'var(--gr)':kpi>=80?'var(--or)':'var(--rd)';
+  const errs=myAtt.filter(r=>r.status&&r.status!=='Đúng giờ').map(r=>`<div style="padding:7px 0;font-size:12px;color:var(--rd);border-bottom:1px solid #f0e0e5">• ${r.date?.slice(5)}: ${r.status}</div>`);
+  document.getElementById('kpi-errors').innerHTML=errs.length?errs.join(''):'<div class="empty" style="padding:10px 0"><div class="empty-ico" style="font-size:24px">✅</div><div class="empty-txt" style="font-size:12px">Chưa có lỗi!</div></div>';
+}
+
+// ═══ UTILS ════════════════════════════════════════════════════════════
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className=`toast ${type} show`;
+  clearTimeout(window._tt);window._tt=setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+// ════ MILAVY APP v3 – New Features ════════════════════════════════════════════
+// SKU System from sheet: [Mã hàng]-[Mã màu]-[Size] e.g. AML08-DE-M
+const MA_MAU = {DE:'Đen',TR:'Trắng',XDE:'Xanh đen',XLA:'Xanh lá',HB:'Hồng baby',HD:'Hồng đậm',XC:'Xanh chuối',XDU:'Xanh dương',TI:'Tím',TPA:'Tím pastel'};
+const DEFAULT_PRODS = [{"sku": "AML01-DE-M", "name": "Áo Milavy cổ tròn logo - AML01", "cat": "Gym", "type": "Áo thun", "size": "M", "color": "Đen (DE)", "loc": "T1-A01-01", "stock": 20, "min": 5, "price": 150000}, {"sku": "AML01-TR-M", "name": "Áo Milavy cổ tròn logo - AML01", "cat": "Gym", "type": "Áo thun", "size": "M", "color": "Trắng (TR)", "loc": "T1-A01-02", "stock": 15, "min": 5, "price": 150000}, {"sku": "AML08-DE-S", "name": "Áo Milavy cổ tròn logo TG - AML08", "cat": "Tennis", "type": "Áo thun", "size": "S", "color": "Đen (DE)", "loc": "T1-A02-01", "stock": 10, "min": 5, "price": 180000}, {"sku": "AML08-HB-M", "name": "Áo Milavy cổ tròn logo TG - AML08", "cat": "Tennis", "type": "Áo thun", "size": "M", "color": "Hồng baby (HB)", "loc": "T1-A02-02", "stock": 8, "min": 5, "price": 180000}, {"sku": "BRA01-DE-M", "name": "Áo BRA MILAVY", "cat": "Gym", "type": "Áo bra", "size": "M", "color": "Đen (DE)", "loc": "T1-B01-01", "stock": 3, "min": 5, "price": 150000}, {"sku": "BRA01-HB-S", "name": "Áo BRA MILAVY", "cat": "Gym", "type": "Áo bra", "size": "S", "color": "Hồng baby (HB)", "loc": "T1-B01-02", "stock": 6, "min": 5, "price": 150000}, {"sku": "QS01-DE-M", "name": "Quần Short MILAVY", "cat": "Gym", "type": "Quần short", "size": "M", "color": "Đen (DE)", "loc": "T2-C01-01", "stock": 12, "min": 5, "price": 160000}, {"sku": "QS01-XDU-L", "name": "Quần Short MILAVY", "cat": "Gym", "type": "Quần short", "size": "L", "color": "Xanh dương (XDU)", "loc": "T2-C01-02", "stock": 7, "min": 5, "price": 160000}, {"sku": "QL01-DE-M", "name": "Quần Lửng MILAVY", "cat": "Yoga", "type": "Quần lửng", "size": "M", "color": "Đen (DE)", "loc": "T2-C02-01", "stock": 9, "min": 5, "price": 170000}, {"sku": "QD01-DE-S", "name": "Quần Dài/Legging MILAVY", "cat": "Yoga", "type": "Quần dài", "size": "S", "color": "Đen (DE)", "loc": "T2-C03-01", "stock": 14, "min": 8, "price": 190000}, {"sku": "QD01-DE-M", "name": "Quần Dài/Legging MILAVY", "cat": "Yoga", "type": "Quần dài", "size": "M", "color": "Đen (DE)", "loc": "T2-C03-02", "stock": 2, "min": 8, "price": 190000}, {"sku": "TT01-TR-M", "name": "Tanktop MILAVY", "cat": "Gym", "type": "Tanktop", "size": "M", "color": "Trắng (TR)", "loc": "T1-A03-01", "stock": 11, "min": 5, "price": 140000}, {"sku": "CV01-DE-M", "name": "Chân váy MILAVY", "cat": "Tennis", "type": "Chân váy", "size": "M", "color": "Đen (DE)", "loc": "T2-D01-01", "stock": 8, "min": 3, "price": 200000}, {"sku": "CV01-TR-S", "name": "Chân váy MILAVY", "cat": "Tennis", "type": "Chân váy", "size": "S", "color": "Trắng (TR)", "loc": "T2-D01-02", "stock": 5, "min": 3, "price": 200000}, {"sku": "BTN01-TR-M", "name": "Bộ Tennis MILAVY", "cat": "Tennis", "type": "Bộ tennis", "size": "M", "color": "Trắng (TR)", "loc": "T2-D02-01", "stock": 6, "min": 2, "price": 380000}, {"sku": "BTN01-DE-S", "name": "Bộ Tennis MILAVY", "cat": "Tennis", "type": "Bộ tennis", "size": "S", "color": "Đen (DE)", "loc": "T2-D02-02", "stock": 4, "min": 2, "price": 380000}, {"sku": "BGY01-XLA-M", "name": "Bộ Gym MILAVY", "cat": "Gym", "type": "Bộ gym", "size": "M", "color": "Xanh lá (XLA)", "loc": "T2-D03-01", "stock": 7, "min": 2, "price": 350000}, {"sku": "BGY01-TI-L", "name": "Bộ Gym MILAVY", "cat": "Gym", "type": "Bộ gym", "size": "L", "color": "Tím (TI)", "loc": "T2-D03-02", "stock": 3, "min": 2, "price": 350000}, {"sku": "PK-SOC-TR", "name": "Vớ thể thao trắng", "cat": "Phụ kiện", "type": "Vớ", "size": "Free", "color": "Trắng", "loc": "CT1-01", "stock": 45, "min": 20, "price": 35000}];
+
+let _prodFilter = 'all';
+let _kkRows = [];
+const S5_CFG = [
+  {s:'S1 Sàng lọc',ico:'🗑️',items:['Hàng lỗi/hoàn tách biệt, dán tem màu đúng','Không có vật dụng thừa tại khu làm việc']},
+  {s:'S2 Sắp xếp',ico:'📦',items:['Nhãn vị trí kho rõ ràng, màu tem đúng tầng','Hàng xếp đúng quy tắc size/màu/FIFO']},
+  {s:'S3 Sạch sẽ',ico:'🧹',items:['Khu packing sạch, bàn không có rác','Lối đi thông thoáng, không hàng chắn']},
+  {s:'S4 Săn sóc',ico:'✅',items:['Camera hoạt động tốt, đèn xanh sáng','Checklist S1-S3 điền đầy đủ mỗi ca']},
+  {s:'S5 Sẵn sàng',ico:'🚀',items:['Vật tư đóng gói đủ dùng ít nhất 2 ngày','NV nắm rõ SOP, trả lời được khi hỏi']},
+];
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  initProds(); renderS5NV();
+  // Image previews
+  [['hn-anh','hn-prev','hn-img'],['hl-anh','hl-prev','hl-img']].forEach(([inp,prv,img]) => {
+    const el = document.getElementById(inp);
+    if (!el) return;
+    el.addEventListener('change', function() {
+      const f = this.files[0]; if (!f) return;
+      const r = new FileReader();
+      r.onload = e => { document.getElementById(img).src = e.target.result; document.getElementById(prv).style.display = 'block'; };
+      r.readAsDataURL(f);
+    });
+  });
+});
+
+// ── DATA HELPERS ─────────────────────────────────────────────────────────────
+const gHN  = () => JSON.parse(localStorage.getItem('mv_hoan')    || '[]');
+const gHL  = () => JSON.parse(localStorage.getItem('mv_defects') || '[]');
+const gBG  = () => JSON.parse(localStorage.getItem('mv_bg')      || '[]');
+const gKK  = () => JSON.parse(localStorage.getItem('mv_kk')      || '[]');
+const gPR  = () => JSON.parse(localStorage.getItem('mv_prods')   || '[]');
+const gS5  = () => JSON.parse(localStorage.getItem('mv_s5')      || '[]');
+const sHN  = d => localStorage.setItem('mv_hoan',    JSON.stringify(d));
+const sHL  = d => localStorage.setItem('mv_defects', JSON.stringify(d));
+const sBG  = d => localStorage.setItem('mv_bg',      JSON.stringify(d));
+const sKK  = d => localStorage.setItem('mv_kk',      JSON.stringify(d));
+const sPR  = d => localStorage.setItem('mv_prods',   JSON.stringify(d));
+const sS5  = d => localStorage.setItem('mv_s5',      JSON.stringify(d));
+
+// ── EXTEND goTo ──────────────────────────────────────────────────────────────
+const _origGT = window.goTo || function(){};
+window.goTo = function(name) {
+  _origGT(name);
+  const map = { hoan:renderHN, defects:renderHL, handover:renderBG, products:renderProds, inventory:renderKK, s5:()=>{} };
+  if (map[name]) map[name]();
+};
+// Patch setup login to also init v3 screens
+const _origLogin = window.doLogin || function(){};
+window.doLogin = function() {
+  _origLogin();
+  initProds(); renderHN(); renderHL(); renderBG(); renderKK();
+};
+
+// ── HÀNG HOÀN NH-01 ──────────────────────────────────────────────────────────
+function onHKQ() {
+  const v = document.getElementById('hn-kq').value;
+  const isFraud = v.includes('Tráo') || v.includes('giả');
+  document.getElementById('hn-kn-grp').style.display = isFraud ? 'block' : 'none';
+  if (isFraud) {
+    document.getElementById('hn-md').value = '🔴 Khẩn cấp – Tráo hàng';
+    toast('🚨 Tráo hàng! Chụp ảnh bằng chứng ngay!', 'err');
+    if (navigator.vibrate) navigator.vibrate([200,100,200,100,200]);
+  }
+}
+function submitHN() {
+  if (!sess) { toast('Thiết lập ca trước!', 'err'); return; }
+  const ma = document.getElementById('hn-ma').value.trim();
+  if (!ma) { toast('Nhập mã đơn hoàn!', 'err'); return; }
+  const kq = document.getElementById('hn-kq').value;
+  const isFraud = kq.includes('Tráo') || kq.includes('giả');
+  const criteria = [...document.querySelectorAll('#sc-hoan .ck-box')].map((b,i) => ({no:i+1, ok:b.classList.contains('chk')}));
+  const now = new Date();
+  const hs = gHN();
+  hs.push({ id:Date.now(), ma, nv:sess.nv, date:sess.date, time:now.toTimeString().slice(0,5),
+    loai:document.getElementById('hn-loai').value, kenh:document.getElementById('hn-kenh').value,
+    kq, mucDo:document.getElementById('hn-md').value, hd:document.getElementById('hn-hd').value,
+    kn:document.getElementById('hn-kn').value, note:document.getElementById('hn-note').value,
+    criteria, coAnh:document.getElementById('hn-anh').files.length>0, isFraud });
+  sHN(hs);
+  ['hn-ma','hn-kn','hn-note'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('hn-anh').value=''; document.getElementById('hn-prev').style.display='none';
+  document.getElementById('hn-kn-grp').style.display='none'; document.getElementById('hn-md').value='🟢 Bình thường';
+  document.querySelectorAll('#sc-hoan .ck-box').forEach(b => b.classList.remove('chk'));
+  renderHN();
+  if (isFraud) { toast('🚨 TRÁO HÀNG! Đã lưu – Báo quản lý ngay!', 'err'); if(navigator.vibrate) navigator.vibrate([300,100,300]); }
+  else toast('✅ Đã lưu hàng hoàn!', 'ok');
+}
+function renderHN() {
+  const hs = gHN().filter(r => !sess || r.nv===sess.nv).reverse().slice(0,20);
+  const el = document.getElementById('hn-list'); if (!el) return;
+  if (!hs.length) { el.innerHTML='<div class="empty"><div class="empty-ico">↩️</div><div class="empty-txt">Chưa có hàng hoàn</div></div>'; return; }
+  el.innerHTML = hs.map(r => {
+    const iF=r.isFraud;
+    const col=iF?'var(--lrd)':r.kq?.includes('Đạt')?'var(--lgr)':'var(--lbl)';
+    const ic=iF?'🚨':r.kq?.includes('Đạt')?'✅':'↩️';
+    return `<div class="list-item" style="background:${iF?'#fff5f5':'#fff'}">
+      <div class="li-ico" style="background:${col}">${ic}</div>
+      <div class="li-body"><div class="li-title">${r.coAnh?'📸 ':''}${r.ma}</div>
+        <div class="li-sub">${r.loai} • ${r.kq?.slice(0,22)||'–'}</div>
+        ${iF?'<span style="background:var(--lrd);color:var(--rd);padding:2px 8px;border-radius:18px;font-size:9px;font-weight:700;display:inline-block;margin-top:3px">🚨 TRÁO HÀNG</span>':''}
+      </div>
+      <div class="li-right"><div style="font-size:10px;color:var(--dgy)">${r.date?.slice(5)||''}</div><div style="font-size:9px;color:var(--dgy)">${r.time||''}</div></div>
+    </div>`;
+  }).join('');
+}
+
+// ── HÀNG LỖI HL-01 ───────────────────────────────────────────────────────────
+function submitHL() {
+  if (!sess) { toast('Thiết lập ca trước!', 'err'); return; }
+  const sku = document.getElementById('hl-sku').value.trim();
+  if (!sku) { toast('Nhập mã SKU!', 'err'); return; }
+  const now = new Date(); const dfs = gHL();
+  dfs.push({ id:Date.now(), nv:sess.nv, date:sess.date, time:now.toTimeString().slice(0,5), sku,
+    name:document.getElementById('hl-name').value, qty:+document.getElementById('hl-qty').value||1,
+    loc:document.getElementById('hl-loc').value, loai:document.getElementById('hl-loai').value,
+    buoc:document.getElementById('hl-buoc').value, mota:document.getElementById('hl-mota').value,
+    hd:document.getElementById('hl-hd').value, coAnh:document.getElementById('hl-anh').files.length>0,
+    maLog:'HL-'+now.toISOString().slice(0,10).replace(/-/g,'')+'-'+String(dfs.length+1).padStart(3,'0') });
+  sHL(dfs);
+  ['hl-sku','hl-name','hl-loc','hl-mota'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('hl-qty').value='1'; document.getElementById('hl-anh').value='';
+  document.getElementById('hl-prev').style.display='none';
+  renderHL(); toast('⚠️ Đã lưu hàng lỗi!', 'warn');
+}
+function renderHL() {
+  const dfs = gHL().filter(d => !sess||d.nv===sess.nv).reverse().slice(0,20);
+  const el = document.getElementById('hl-list'); if (!el) return;
+  if (!dfs.length) { el.innerHTML='<div class="empty"><div class="empty-ico">⚠️</div><div class="empty-txt">Chưa có hàng lỗi</div></div>'; return; }
+  el.innerHTML = dfs.map(d => `<div class="list-item"><div class="li-ico" style="background:var(--lrd)">⚠️</div>
+    <div class="li-body"><div class="li-title">${d.coAnh?'📸 ':''}${d.sku} × ${d.qty}</div>
+      <div class="li-sub">${d.loai} • ${d.buoc}</div>
+      <div style="font-size:10px;color:var(--bl)">${d.maLog||''}</div></div>
+    <div class="li-right" style="font-size:10px;color:var(--dgy)">${d.date?.slice(5)||''}</div></div>`).join('');
+}
+
+// ── BÀN GIAO CA BG-01 ────────────────────────────────────────────────────────
+function submitBG() {
+  if (!sess) { toast('Thiết lập ca trước!', 'err'); return; }
+  const nxt = document.getElementById('bg-next').value;
+  if (!nxt) { toast('Chọn NV nhận ca!', 'err'); return; }
+  const checks=[...document.querySelectorAll('#bg-ck .ck-item')].map(el=>({label:el.querySelector('.ck-txt').textContent.trim(),ok:el.querySelector('.ck-box').classList.contains('chk')})  );
+  const now=new Date(); const bgs=gBG();
+  bgs.push({ id:Date.now(), nv:sess.nv, date:sess.date, time:now.toTimeString().slice(0,5), ca:sess.ca, nextNv:nxt,
+    tot:+document.getElementById('bg-tot').value||0, ok:+document.getElementById('bg-ok2').value||0,
+    dvvc:+document.getElementById('bg-dvvc').value||0, xdon:+document.getElementById('bg-xdon').value||0,
+    prio:document.getElementById('bg-prio').value, thht:+document.getElementById('bg-thht').value||0,
+    bom:+document.getElementById('bg-bom').value||0, loi:+document.getElementById('bg-loi2').value||0,
+    fraud:+document.getElementById('bg-fraud2').value||0, checks,
+    inc:document.getElementById('bg-inc').value, note:document.getElementById('bg-note2').value });
+  sBG(bgs);
+  ['bg-tot','bg-ok2','bg-dvvc','bg-xdon','bg-prio','bg-thht','bg-bom','bg-loi2','bg-fraud2','bg-inc','bg-note2'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('bg-next').value='';
+  document.querySelectorAll('#bg-ck .ck-box').forEach(b=>b.classList.remove('chk'));
+  renderBG(); toast(`✅ Bàn giao ca cho ${nxt} thành công!`, 'ok');
+}
+function renderBG() {
+  const bgs=gBG().filter(b=>!sess||b.nv===sess.nv).reverse().slice(0,5);
+  const el=document.getElementById('bg-hist'); if(!el) return;
+  if(!bgs.length){el.innerHTML='<div class="empty"><div class="empty-ico">🔄</div><div class="empty-txt">Chưa có bàn giao</div></div>';return;}
+  el.innerHTML=bgs.map(b=>`<div class="list-item"><div class="li-ico" style="background:var(--lbl)">🔄</div>
+    <div class="li-body"><div class="li-title">${b.nv} → ${b.nextNv}</div>
+      <div class="li-sub">Ca ${b.ca} • OK:${b.ok} • X:${b.xdon}${b.fraud>0?' • 🚨'+b.fraud+' tráo':''}</div></div>
+    <div class="li-right" style="font-size:10px;color:var(--dgy)">${b.date?.slice(5)||''}</div></div>`).join('');
+}
+
+// ── PRODUCTS ──────────────────────────────────────────────────────────────────
+function initProds() {
+  if (gPR().length === 0) sPR(DEFAULT_PRODS);
+}
+function fProd(f, btn) {
+  _prodFilter = f;
+  document.querySelectorAll('#sc-products .btn-sm').forEach(b => { b.classList.remove('btn-primary'); b.classList.add('btn-ghost'); });
+  if (btn) { btn.classList.add('btn-primary'); btn.classList.remove('btn-ghost'); }
+  renderProds();
+}
+function renderProds() {
+  const q = (document.getElementById('prod-q')?.value||'').toLowerCase();
+  const prods = gPR().filter(p => {
+    if (q && !p.sku?.toLowerCase().includes(q) && !p.name?.toLowerCase().includes(q)) return false;
+    if (_prodFilter === 'low') return p.stock <= p.min;
+    if (_prodFilter !== 'all') return p.cat === _prodFilter;
+    return true;
+  });
+  const el = document.getElementById('prod-list'); if (!el) return;
+  if (!prods.length) { el.innerHTML='<div class="empty"><div class="empty-ico">🏷️</div><div class="empty-txt">Không có sản phẩm</div></div>'; return; }
+  const f = n => new Intl.NumberFormat('vi-VN').format(Math.round(n))+'đ';
+  el.innerHTML = prods.map(p => {
+    const pct = Math.min(100, Math.round(p.stock/Math.max(p.min*3,1)*100));
+    const col = p.stock<=0?'#922B21':p.stock<=p.min?'#BA4A00':'#1A6632';
+    const warn = p.stock<=p.min?'<span style="background:#FADBD8;color:#922B21;padding:2px 8px;border-radius:18px;font-size:9px;font-weight:700">⚠️ Sắp hết</span>':'';
+    return `<div class="prod-card" onclick="showProd('${p.sku}')">
+      <div style="display:flex;justify-content:space-between;margin-bottom:7px">
+        <div><span class="sku-bd">${p.sku}</span>
+          <div style="font-size:13px;font-weight:700;color:var(--acc);margin-top:5px">${p.name}</div>
+          <div style="font-size:10px;color:var(--dgy);margin-top:2px">${p.cat} • ${p.color} • Size ${p.size}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;margin-left:10px">
+          <div style="font-size:22px;font-weight:800;color:${col}">${p.stock}</div>
+          <div style="font-size:9px;color:var(--dgy)">còn lại</div>${warn}
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px">
+        <span class="inv-loc">${p.loc||'Chưa có'}</span>
+        <span style="font-size:10px;color:var(--dgy)">Tối thiểu: ${p.min}</span>
+      </div>
+      <div class="stk-bar"><div class="stk-fill" style="width:${pct}%;background:${col}"></div></div>
+    </div>`;
+  }).join('');
+}
+function showProd(sku) {
+  const p = gPR().find(x=>x.sku===sku); if(!p) return;
+  const col=p.stock<=0?'#922B21':p.stock<=p.min?'#BA4A00':'#1A6632';
+  const f=n=>new Intl.NumberFormat('vi-VN').format(Math.round(n))+'đ';
+  document.getElementById('prod-detail-body').innerHTML=`
+    <div class="modal-handle"></div>
+    <div style="font-size:16px;font-weight:800;color:var(--acc);margin-bottom:5px">🏷️ ${p.name}</div>
+    <span class="sku-bd">${p.sku}</span>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0">
+      <div style="background:var(--gy);border-radius:9px;padding:12px;text-align:center"><div style="font-size:9px;color:var(--dgy);font-weight:700">TỒN KHO</div><div style="font-size:26px;font-weight:900;color:${col}">${p.stock}</div></div>
+      <div style="background:var(--gy);border-radius:9px;padding:12px;text-align:center"><div style="font-size:9px;color:var(--dgy);font-weight:700">TỒN TỐI THIỂU</div><div style="font-size:26px;font-weight:900;color:var(--acc)">${p.min}</div></div>
+    </div>
+    <div style="font-size:12px;line-height:1.9;color:var(--acc);margin-bottom:12px">
+      📁 ${p.cat} &nbsp;|&nbsp; 👕 ${p.type} &nbsp;|&nbsp; 🎨 ${p.color} &nbsp;|&nbsp; 📏 ${p.size}<br>
+      📍 <strong style="color:var(--bl);font-family:monospace">${p.loc||'Chưa có'}</strong> &nbsp;|&nbsp; 💰 ${f(p.price)}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:7px;align-items:flex-end;margin-bottom:12px">
+      <div><label class="f-label">Cập nhật tồn kho</label><input type="number" class="f-input" id="pd-stk-${sku.replace(/-/g,'_')}" value="${p.stock}" min="0" style="font-size:14px"></div>
+      <button onclick="updStk('${sku}')" class="btn btn-primary btn-sm">💾 Lưu</button>
+    </div>
+    <button onclick="closeModal('prod-detail-mo')" style="width:100%;padding:11px;background:none;border:2px solid #f0e0e5;border-radius:11px;font-size:13px;color:var(--dgy);cursor:pointer;font-family:inherit">Đóng</button>`;
+  openModal('prod-detail-mo');
+}
+function addProd() {
+  const sku=document.getElementById('pa-sku').value.trim();
+  const name=document.getElementById('pa-name').value.trim();
+  if(!sku||!name){toast('Nhập đầy đủ SKU và tên!','err');return;}
+  const prods=gPR();
+  if(prods.find(p=>p.sku===sku)){toast('SKU đã tồn tại!','warn');return;}
+  prods.push({id:Date.now(),sku,name,cat:document.getElementById('pa-cat').value,type:document.getElementById('pa-type').value,color:document.getElementById('pa-color').value,size:document.getElementById('pa-size').value,loc:document.getElementById('pa-loc').value,stock:+document.getElementById('pa-stock').value||0,min:+document.getElementById('pa-min').value||5,price:+document.getElementById('pa-price').value||0});
+  sPR(prods);closeModal('prod-add-mo');renderProds();
+  toast('✅ Đã thêm sản phẩm!','ok');
+  ['pa-sku','pa-name','pa-color','pa-loc','pa-price'].forEach(id=>document.getElementById(id).value='');
+}
+function updStk(sku) {
+  const prods=gPR();const idx=prods.findIndex(p=>p.sku===sku);if(idx<0)return;
+  const inputId='pd-stk-'+sku.replace(/-/g,'_');
+  prods[idx].stock=+document.getElementById(inputId).value||0;
+  sPR(prods);closeModal('prod-detail-mo');renderProds();
+  toast('✅ Đã cập nhật tồn kho!','ok');
+}
+
+// ── KIỂM KHO KK-02 ────────────────────────────────────────────────────────────
+function addKKRow() {
+  const loc=document.getElementById('kk-loc').value.trim();
+  const sku=document.getElementById('kk-sku').value.trim();
+  const sys=+document.getElementById('kk-sys').value||0;
+  const real=+document.getElementById('kk-real').value||0;
+  if(!sku){toast('Nhập mã SKU!','err');return;}
+  _kkRows.push({loc,sku,sys,real,diff:real-sys});
+  renderKKRows();
+  ['kk-loc','kk-sku','kk-sys','kk-real'].forEach(id=>document.getElementById(id).value='');
+}
+function renderKKRows() {
+  const el=document.getElementById('kk-list');if(!el)return;
+  if(!_kkRows.length){el.innerHTML='<div class="empty"><div class="empty-ico">🔍</div><div class="empty-txt">Chưa có dòng kiểm</div></div>';return;}
+  el.innerHTML=_kkRows.map((r,i)=>{
+    const col=r.diff<0?'#922B21':r.diff>0?'#BA4A00':'#1A6632';
+    return `<div class="inv-row"><div style="flex:1"><span class="inv-loc">${r.loc||'?'}</span><div style="font-size:12px;font-weight:700;color:var(--acc);margin-top:4px">${r.sku}</div></div>
+      <div style="text-align:right;font-size:11px"><div style="color:var(--dgy)">HT:${r.sys}/Thực:${r.real}</div><div style="font-weight:700;color:${col}">${r.diff>=0?'+':''}${r.diff} ${r.diff===0?'✅':r.diff<0?'❌Thiếu':'⚠️Thừa'}</div></div>
+      <button onclick="_kkRows.splice(${i},1);renderKKRows()" style="background:none;border:none;color:var(--rd);font-size:16px;cursor:pointer;padding:4px 8px">✕</button></div>`;
+  }).join('');
+}
+function submitKK() {
+  if(!sess){toast('Thiết lập ca trước!','err');return;}
+  if(!_kkRows.length){toast('Chưa có dòng kiểm!','warn');return;}
+  const now=new Date();const kks=gKK();const nD=_kkRows.filter(r=>r.diff!==0).length;
+  kks.push({id:Date.now(),nv:sess.nv,date:sess.date,time:now.toTimeString().slice(0,5),type:document.getElementById('kk-type').value,area:document.getElementById('kk-area').value,items:[..._kkRows],total:_kkRows.length,nDiff:nD});
+  sKK(kks);_kkRows=[];renderKKRows();renderKK();
+  toast(`✅ Kiểm kho xong! ${nD} SKU chênh lệch`,nD>0?'warn':'ok');
+}
+function renderKK() {
+  const kks=gKK().filter(k=>!sess||k.nv===sess.nv).reverse().slice(0,5);
+  const el=document.getElementById('kk-hist');if(!el)return;
+  if(!kks.length){el.innerHTML='<div class="empty"><div class="empty-ico">🔍</div><div class="empty-txt">Chưa có kết quả</div></div>';return;}
+  el.innerHTML=kks.map(k=>`<div class="list-item"><div class="li-ico" style="background:${k.nDiff>0?'var(--lor)':'var(--lgr)'}">${k.nDiff>0?'⚠️':'✅'}</div>
+    <div class="li-body"><div class="li-title">${k.type} – ${k.area}</div><div class="li-sub">${k.date} • ${k.total} SKU • ${k.nDiff} chênh lệch</div></div>
+    <div class="li-right" style="font-size:10px;color:var(--dgy)">${k.time}</div></div>`).join('');
+}
+
+// ── 5S CHẤM ĐIỂM ─────────────────────────────────────────────────────────────
+// 5S scoring removed from NV - CEO only
+// submitS5 removed - CEO only
+// renderS5 replaced by renderS5NV
+
+function renderS5NV() {
+  const s5s = JSON.parse(localStorage.getItem('mv_s5')||'[]').reverse();
+  // Latest result
+  const latest = s5s[0];
+  const latestEl = document.getElementById('s5-nv-latest');
+  if(latestEl) {
+    if(!latest) {
+      latestEl.innerHTML='<div class="empty" style="padding:16px 0"><div class="empty-ico" style="font-size:28px">🌟</div><div class="empty-txt" style="font-size:12px">Chưa có kết quả</div></div>';
+    } else {
+      const col=latest.total>=85?'var(--green)':latest.total>=70?'var(--orange)':'var(--red)';
+      latestEl.innerHTML=`
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="width:70px;height:70px;border-radius:50%;border:4px solid ${col};display:flex;flex-direction:column;align-items:center;justify-content:center">
+            <div style="font-size:22px;font-weight:900;color:${col}">${latest.total}</div>
+            <div style="font-size:8px;color:var(--gray-dark)">/ 100</div>
+          </div>
+          <div><div style="font-size:15px;font-weight:700;color:var(--accent)">${latest.result}</div>
+            <div style="font-size:11px;color:var(--gray-dark)">Chấm bởi: ${latest.by||latest.nv}</div>
+            <div style="font-size:11px;color:var(--gray-dark)">${latest.date} ${latest.time||''}</div>
+          </div>
+        </div>
+        ${latest.note?`<div style="background:var(--light-orange);border-radius:9px;padding:9px 12px;font-size:12px;color:var(--orange)">⚠️ Cần cải thiện: ${latest.note}</div>`:''}`;
+    }
+  }
+  // History list
+  const histEl = document.getElementById('s5-hist-nv');
+  if(histEl) {
+    if(!s5s.length) { histEl.innerHTML='<div class="empty"><div class="empty-ico">🌟</div><div class="empty-txt">Chưa có kết quả</div></div>'; return; }
+    histEl.innerHTML = s5s.map(s=>{
+      const col=s.total>=85?'var(--green)':s.total>=70?'var(--orange)':'var(--red)';
+      return `<div class="list-item">
+        <div class="li-ico" style="background:${s.total>=85?'var(--light-green)':s.total>=70?'var(--light-orange)':'var(--light-red)'}">${s.total>=85?'✅':s.total>=70?'⚠️':'❌'}</div>
+        <div class="li-body"><div class="li-title">5S – ${s.date}</div>
+          <div class="li-sub">Chấm bởi: ${s.by||s.nv} • ${s.result}</div></div>
+        <div class="li-right" style="font-size:16px;font-weight:800;color:${col}">${s.total}</div>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ── HÀNG HOÀN QR SCAN ───────────────────────────────────────────────────────
+let _hoanCamActive = false;
+let _hoanQR = null;
+function scanHoanQR() {
+  if(_hoanCamActive) {
+    _hoanCamActive = false;
+    if(_hoanQR) { _hoanQR.stop().catch(()=>{}); _hoanQR=null; }
+    document.getElementById('hn-reader').style.display='none';
+    document.getElementById('hn-cam-btn').textContent='📷';
+    return;
+  }
+  if(typeof Html5Qrcode==='undefined') { toast('Camera không khả dụng – nhập tay mã đơn','warn'); return; }
+  document.getElementById('hn-reader').style.display='block';
+  document.getElementById('hn-cam-btn').textContent='⏹';
+  _hoanCamActive = true;
+  _hoanQR = new Html5Qrcode('hn-reader');
+  _hoanQR.start({facingMode:'environment'},{fps:10,qrbox:{width:240,height:160}},
+    (text) => {
+      document.getElementById('hn-ma').value = text.trim();
+      toast(`✅ Quét được: ${text.slice(-12)}`,'ok');
+      if(navigator.vibrate) navigator.vibrate(60);
+      _hoanQR.stop().catch(()=>{});
+      _hoanQR=null; _hoanCamActive=false;
+      document.getElementById('hn-reader').style.display='none';
+      document.getElementById('hn-cam-btn').textContent='📷';
+    },
+    ()=>{}
+  ).catch(()=>{ toast('Không bật được camera','warn'); });
+}
+
+
+// ════════════════════════════════════════════════════════════════
+// MILAVY SYNC ENGINE – Google Apps Script Bridge
+// Tự động đồng bộ localStorage ↔ Google Sheet
+// ════════════════════════════════════════════════════════════════
+
+const SYNC_CONFIG = {
+  apiUrl:   localStorage.getItem('mv_api_url') || '',
+  apiKey:   localStorage.getItem('mv_api_key') || 'MILAVY2026SECRET',
+  interval: 30000,  // sync mỗi 30 giây
+  keys: [
+    'mv_records','mv_att','mv_leaves','mv_hoan','mv_defects',
+    'mv_bg','mv_kk','mv_prods','mv_s5','mv_schedules','mv_ot','mv_tl','mv_kn'
+  ]
+};
+
+let _syncTimer    = null;
+let _syncStatus   = 'offline';
+let _lastSyncTime = null;
+let _isSyncing    = false;
+
+// ── PUBLIC API ────────────────────────────────────────────────
+async function syncNow(silent = false) {
+  if (!SYNC_CONFIG.apiUrl) return;
+  if (_isSyncing) return;
+  _isSyncing = true;
+  if (!silent) showSyncStatus('syncing');
+
+  try {
+    // 1. Gom tất cả data local
+    const localData = {};
+    SYNC_CONFIG.keys.forEach(k => {
+      const v = localStorage.getItem(k);
+      if (v) localData[k] = v;
+    });
+
+    // 2. Gửi lên server & nhận merged data về
+    const res = await apiCall('setAll', { data: JSON.stringify(localData) });
+    if (!res.ok) throw new Error(res.error || 'Sync failed');
+
+    // 3. Pull toàn bộ data mới nhất từ server
+    const getRes = await apiCall('getAll');
+    if (!getRes.ok) throw new Error(getRes.error);
+
+    // 4. Cập nhật localStorage với data mới nhất
+    let updated = 0;
+    Object.entries(getRes.data || {}).forEach(([key, obj]) => {
+      const serverVal = typeof obj.value === 'string' ? obj.value : JSON.stringify(obj.value);
+      const localVal  = localStorage.getItem(key);
+      if (serverVal && serverVal !== localVal) {
+        localStorage.setItem(key, serverVal);
+        updated++;
+      }
+    });
+
+    _lastSyncTime = new Date();
+    _syncStatus   = 'online';
+    if (!silent) showSyncStatus('ok', updated);
+
+    // Refresh UI nếu có data mới
+    if (updated > 0 && typeof refreshUI === 'function') refreshUI();
+
+  } catch (err) {
+    _syncStatus = 'error';
+    if (!silent) showSyncStatus('err', 0, err.message);
+    console.warn('Sync error:', err);
+  } finally {
+    _isSyncing = false;
+  }
+}
+
+// ── API CALL ─────────────────────────────────────────────────
+async function apiCall(action, extra = {}) {
+  const url  = SYNC_CONFIG.apiUrl;
+  if (!url) return { ok: false, error: 'No API URL' };
+  const body = JSON.stringify({ action, apiKey: SYNC_CONFIG.apiKey, ...extra });
+  const res  = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body
+  });
+  return await res.json();
+}
+
+// ── AUTO SYNC ────────────────────────────────────────────────
+function startAutoSync() {
+  if (!SYNC_CONFIG.apiUrl) return;
+  syncNow(true);  // sync ngay lần đầu
+  _syncTimer = setInterval(() => syncNow(true), SYNC_CONFIG.interval);
+  console.log('Auto sync started:', SYNC_CONFIG.interval/1000, 's interval');
+}
+function stopAutoSync() {
+  if (_syncTimer) { clearInterval(_syncTimer); _syncTimer = null; }
+}
+
+// ── SYNC STATUS INDICATOR ────────────────────────────────────
+function showSyncStatus(status, count = 0, err = '') {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  const map = {
+    syncing: { txt: '🔄 Đang đồng bộ...', bg: '#1A5276', color: '#60a5fa' },
+    ok:      { txt: count > 0 ? `✅ Đã sync (${count} thay đổi)` : '✅ Đã đồng bộ', bg: '#1A6632', color: '#4ade80' },
+    err:     { txt: '⚠️ Lỗi sync – Đang dùng offline', bg: '#BA4A00', color: '#fb923c' },
+    offline: { txt: '📴 Chế độ offline', bg: '#374151', color: '#9ca3af' },
+  };
+  const s = map[status] || map.offline;
+  el.textContent = s.txt;
+  el.style.background = s.bg;
+  el.style.color = s.color;
+  el.style.display = 'block';
+  if (status === 'ok') setTimeout(() => { if(el) el.style.display='none'; }, 3000);
+}
+
+// ── SAVE TO SERVER (ghi ngay khi có thay đổi quan trọng) ─────
+async function saveToServer(key, value) {
+  if (!SYNC_CONFIG.apiUrl) return;
+  try {
+    await apiCall('set', { key, value: typeof value === 'string' ? value : JSON.stringify(value) });
+  } catch(e) { /* silent fail - will sync later */ }
+}
+
+// ── API URL CONFIG ───────────────────────────────────────────
+function setApiUrl(url) {
+  SYNC_CONFIG.apiUrl = url;
+  localStorage.setItem('mv_api_url', url);
+  stopAutoSync();
+  if (url) startAutoSync();
+}
+
+// ── HEALTH CHECK ─────────────────────────────────────────────
+async function testApiConnection(url) {
+  try {
+    const res = await fetch(url + '?action=health&apiKey=' + SYNC_CONFIG.apiKey);
+    const data = await res.json();
+    return data.ok ? { ok: true, msg: data.msg } : { ok: false, msg: data.error };
+  } catch(e) {
+    return { ok: false, msg: e.message };
+  }
+}
+
+// ── NV APP SYNC HOOKS ─────────────────────────────────────────
+// Override localStorage writes to also push to server
+const _origSI = localStorage.setItem.bind(localStorage);
+const _MV_SYNC_KEYS = ['mv_records','mv_att','mv_hoan','mv_defects','mv_bg','mv_kk','mv_prods','mv_leaves','mv_s5'];
+function syncedSet(key, value) {
+  _origSI(key, value);
+  if (_MV_SYNC_KEYS.includes(key) && SYNC_CONFIG.apiUrl) {
+    saveToServer(key, value);
+  }
+}
+// Patch all mv_ writes
+['mv_records','mv_att','mv_hoan','mv_defects','mv_bg','mv_kk'].forEach(k => {
+  // will be called via syncedSet in each submit function
+});
+
+// refreshUI for NV app
+function refreshUI() {
+  if(sess) {
+    updateHome();
+    const activeScreen = document.querySelector('.screen.active');
+    if(activeScreen) {
+      const name = activeScreen.id.replace('sc-','');
+      const refreshMap = {
+        orders: ()=>renderOrders('all'),
+        att: ()=>{renderCalendar();updateAtt();},
+        salary: renderSalary,
+        leave: renderLeaves,
+        kpi: updateKPI,
+        hoan: renderHN,
+        defects: renderHL,
+        handover: renderBG,
+        products: renderProds,
+        inventory: renderKK,
+        s5: renderS5NV
+      };
+      if(refreshMap[name]) refreshMap[name]();
+    }
+  }
+}
+
+// Start sync after login
+const _nvOrigLogin = window.doLogin || function(){};
+window.doLogin = function() {
+  _nvOrigLogin();
+  const savedUrl = localStorage.getItem('mv_api_url');
+  if(savedUrl) { SYNC_CONFIG.apiUrl = savedUrl; startAutoSync(); }
+};
+
+// Add sync button to settings-like area in home
+document.addEventListener('DOMContentLoaded', () => {
+  // Add API settings to setup screen
+  const setupCard = document.querySelector('.setup-card');
+  if(setupCard) {
+    const div = document.createElement('div');
+    div.style.cssText = 'margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1)';
+    div.innerHTML = `
+      <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:6px">🔌 Kết nối đồng bộ (tuỳ chọn)</div>
+      <input type="url" id="api-url-input" placeholder="Paste URL Apps Script vào đây..." 
+        value="${localStorage.getItem('mv_api_url')||''}"
+        style="width:100%;padding:9px 11px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:9px;color:#fff;font-size:12px;font-family:inherit;outline:none;margin-bottom:7px">
+      <button onclick="saveApiUrl()" style="width:100%;padding:9px;background:rgba(26,102,50,.4);border:1px solid rgba(74,222,128,.3);border-radius:9px;color:#4ade80;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">💾 Lưu & Kết nối</button>
+      <div id="api-test-result" style="font-size:11px;color:rgba(255,255,255,.4);margin-top:5px;text-align:center"></div>`;
+    setupCard.appendChild(div);
+  }
+});
+
+async function saveApiUrl() {
+  const url = document.getElementById('api-url-input')?.value?.trim();
+  const res = document.getElementById('api-test-result');
+  if(!url) { if(res) res.textContent = '❌ Nhập URL trước!'; return; }
+  if(res) res.textContent = '🔄 Đang kiểm tra...';
+  const test = await testApiConnection(url);
+  if(test.ok) {
+    setApiUrl(url);
+    if(res) res.textContent = '✅ Kết nối thành công! ' + test.msg;
+    setTimeout(()=>syncNow(), 500);
+  } else {
+    if(res) res.textContent = '❌ Lỗi: ' + test.msg;
+  }
+}
+</script>
+</body>
+</html>
